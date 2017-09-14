@@ -12,8 +12,6 @@ public class StoryDetails {
 
 	private Integer storypoints;
 
-	private Integer projectId;
-
 	private List<String> criteria;
 
 	public Integer getStoryId() {
@@ -30,10 +28,6 @@ public class StoryDetails {
 
 	public Integer getStorypoints() {
 		return storypoints;
-	}
-
-	public Integer getProjectId() {
-		return projectId;
 	}
 
 	public List<String> getCriteria() {

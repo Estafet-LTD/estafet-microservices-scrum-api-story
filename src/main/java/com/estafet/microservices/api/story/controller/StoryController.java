@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,17 +24,17 @@ public class StoryController {
 	private StoryService storyService;
 	
 	@GetMapping("/story/{id}")
-	public Story getStory(int storyId) {
-		return storyService.getStory(storyId);
+	public Story getStory(@PathVariable int id) {
+		return storyService.getStory(id);
 	}
 	
-	@PostMapping("/story")
-	public ResponseEntity createStory(@RequestBody StoryDetails message) {
-		return new ResponseEntity(storyService.createStory(message), HttpStatus.OK);
+	@PostMapping("/project/{id}/story")
+	public ResponseEntity createStory(@PathVariable int id, @RequestBody StoryDetails message) {
+		return new ResponseEntity(storyService.createStory(id, message), HttpStatus.OK);
 	}
 	
 	@DeleteMapping("/story/{id}")
-	public ResponseEntity deleteStory(int id) {
+	public ResponseEntity deleteStory(@PathVariable int id) {
 		storyService.deleteStory(id);
 		return new ResponseEntity(id, HttpStatus.OK);
 	}

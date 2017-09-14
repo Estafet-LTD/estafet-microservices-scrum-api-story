@@ -22,10 +22,10 @@ public class StoryService {
 		return template.getForObject("http://localhost:8080/story-repository/story/{id}", Story.class, params);
 	}
 
-	public Story createStory(StoryDetails message) {
+	public Story createStory(int projectId, StoryDetails message) {
 		RestTemplate template = new RestTemplate();
 		Map<String, Integer> params = new HashMap<String, Integer>();
-		params.put("id", message.getProjectId());
+		params.put("id", projectId);
 		Story story = new Story().setDescription(message.getDescription()).setStorypoints(message.getStorypoints())
 				.setTitle(message.getTitle());
 		return template.postForObject("http://localhost:8080/story-repository/project/{id}/sprint", story, Story.class,
