@@ -4,8 +4,6 @@ public class TaskDetails {
 
 	private int taskId;
 
-	private int storyId;
-
 	private String title;
 
 	private String description;
@@ -16,20 +14,32 @@ public class TaskDetails {
 		return taskId;
 	}
 
-	public int getStoryId() {
-		return storyId;
+	public void setTaskId(int taskId) {
+		this.taskId = taskId;
 	}
 
 	public String getTitle() {
 		return title;
 	}
 
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
 	public String getDescription() {
 		return description;
 	}
 
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
 	public Integer getInitialHours() {
 		return initialHours;
+	}
+
+	public void setInitialHours(Integer initialHours) {
+		this.initialHours = initialHours;
 	}
 
 }

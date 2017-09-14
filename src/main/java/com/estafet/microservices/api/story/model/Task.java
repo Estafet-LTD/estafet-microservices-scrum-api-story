@@ -1,5 +1,8 @@
 package com.estafet.microservices.api.story.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 public class Task {
 
 	private Integer id;
@@ -10,6 +13,7 @@ public class Task {
 
 	private Integer initialHours;
 
+	@JsonInclude(Include.NON_NULL)
 	private Integer remainingHours;
 
 	private String status = "Not Started";

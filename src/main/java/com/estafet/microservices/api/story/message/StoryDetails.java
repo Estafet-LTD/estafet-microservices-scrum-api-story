@@ -1,5 +1,6 @@
 package com.estafet.microservices.api.story.message;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class StoryDetails {
@@ -12,7 +13,7 @@ public class StoryDetails {
 
 	private Integer storypoints;
 
-	private List<String> criteria;
+	private List<String> criteria = new ArrayList<String>();
 
 	public Integer getStoryId() {
 		return storyId;

@@ -3,6 +3,9 @@ package com.estafet.microservices.api.story.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 public class Story {
 
 	private int id;
@@ -13,6 +16,7 @@ public class Story {
 
 	private Integer storypoints;
 
+	@JsonInclude(Include.NON_NULL)
 	private Integer sprintId;
 
 	private Integer projectId;
@@ -23,6 +27,11 @@ public class Story {
 
 	private String status = "Not Started";
 
+	public Story addCriteria(String criterion) {
+		criteria.add(new AcceptanceCriterion().setDescription(criterion));
+		return this;
+	}
+	
 	public Story addTask(Task task) {
   		tasks.add(task);
  		if ("Not Started".equals(status)) {
@@ -97,6 +106,11 @@ public class Story {
 
 	public String getStatus() {
 		return status;
+	}
+
+	public Story setProjectId(Integer projectId) {
+		this.projectId = projectId;
+		return this;
 	}
 
 	public Story setId(int id) {
