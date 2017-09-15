@@ -77,7 +77,7 @@ public class StoryService {
 		RestTemplate template = new RestTemplate();
 		Map<String, Integer> params = new HashMap<String, Integer>();
 		params.put("id", projectId);
-		return template.getForObject("http://localhost:8080/sprint-repository/project/{id}", Project.class, params);
+		return template.getForObject("http://localhost:8080/project-repository/project/{id}", Project.class, params);
 	}
 
 	public Story addSprintStory(AddSprintStory message) {
