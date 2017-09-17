@@ -22,7 +22,7 @@ public class StoryService {
 		RestTemplate template = new RestTemplate();
 		Map<String, Integer> params = new HashMap<String, Integer>();
 		params.put("id", storyId);
-		return template.getForObject("http://localhost:8080/story-repository/story/{id}", Story.class, params);
+		return template.getForObject(System.getenv("STORY_REPOSITORY_SERVICE_URI") + "/story/{id}", Story.class, params);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -30,7 +30,7 @@ public class StoryService {
 		RestTemplate template = new RestTemplate();
 		Map<String, Integer> params = new HashMap<String, Integer>();
 		params.put("id", projectId);
-		return template.getForObject("http://localhost:8080/story-repository/project/{id}/stories",
+		return template.getForObject(System.getenv("STORY_REPOSITORY_SERVICE_URI") + "/project/{id}/stories",
 				new ArrayList<Story>().getClass(), params);
 	}
 
@@ -44,7 +44,7 @@ public class StoryService {
 			story.addCriteria(criteria);
 		}
 		return template
-				.postForObject("http://localhost:8080/story-repository/project/{id}/story", story, Story.class, params)
+				.postForObject(System.getenv("STORY_REPOSITORY_SERVICE_URI") + "/project/{id}/story", story, Story.class, params)
 				.setProjectId(projectId);
 	}
 
@@ -52,14 +52,14 @@ public class StoryService {
 		RestTemplate template = new RestTemplate();
 		Map<String, Integer> params = new HashMap<String, Integer>();
 		params.put("id", storyId);
-		template.delete("http://localhost:8080/story-repository/story/{id}", params);
+		template.delete(System.getenv("STORY_REPOSITORY_SERVICE_URI") + "/story/{id}", params);
 	}
 
 	public Story addAcceptanceCriteria(Integer storyId, AcceptanceCriteriaDetails message) {
 		RestTemplate template = new RestTemplate();
 		Map<String, Integer> params = new HashMap<String, Integer>();
 		params.put("id", storyId);
-		return template.postForObject("http://localhost:8080/story-repository/story/{id}/criteria",
+		return template.postForObject(System.getenv("STORY_REPOSITORY_SERVICE_URI") + "/story/{id}/criteria",
 				new AcceptanceCriterion().setDescription(message.getCriteria()), Story.class, params);
 	}
 
@@ -69,7 +69,7 @@ public class StoryService {
 		params.put("id", message.getStoryId());
 		Story story = getStory(message.getStoryId()).setDescription(message.getDescription())
 				.setStorypoints(message.getStorypoints()).setTitle(message.getTitle());
-		template.put("http://localhost:8080/story-repository/story/{id}", story, params);
+		template.put(System.getenv("STORY_REPOSITORY_SERVICE_URI") + "/story/{id}", story, params);
 		return getStory(message.getStoryId());
 	}
 
@@ -77,7 +77,7 @@ public class StoryService {
 		RestTemplate template = new RestTemplate();
 		Map<String, Integer> params = new HashMap<String, Integer>();
 		params.put("id", projectId);
-		return template.getForObject("http://localhost:8080/project-repository/project/{id}", Project.class, params);
+		return template.getForObject(System.getenv("PROJECT_REPOSITORY_SERVICE_URI") + "/project/{id}", Project.class, params);
 	}
 
 	public Story addSprintStory(AddSprintStory message) {
@@ -88,13 +88,13 @@ public class StoryService {
 		if (!getProject(story.getProjectId()).containsSprint(message.getSprintId())) {
 			throw new RuntimeException("Cannot add story " + story.getId() + " to sprint " + message.getSprintId());
 		}
-		template.put("http://localhost:8080/story-repository/story/{id}", story.start(message.getSprintId()), params);
+		template.put(System.getenv("STORY_REPOSITORY_SERVICE_URI") + "/story/{id}", story.start(message.getSprintId()), params);
 		return getStory(message.getStoryId());
 	}
 
 	public Story removeSprintStory(int storyId) {
 		RestTemplate template = new RestTemplate();
-		return template.postForObject("http://localhost:8080/story-repository/remove-story-from-sprint", new Story().setId(storyId), Story.class);
+		return template.postForObject(System.getenv("STORY_REPOSITORY_SERVICE_URI") + "/remove-story-from-sprint", new Story().setId(storyId), Story.class);
 	}
 
 }

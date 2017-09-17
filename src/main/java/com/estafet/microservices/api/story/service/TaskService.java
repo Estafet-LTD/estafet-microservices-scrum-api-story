@@ -17,7 +17,7 @@ public class TaskService {
 		RestTemplate template = new RestTemplate();
 		Map<String, Integer> params = new HashMap<String, Integer>();
 		params.put("id", taskId);
-		return template.getForObject("http://localhost:8080/story-repository/task/{id}", Task.class, params);
+		return template.getForObject(System.getenv("STORY_REPOSITORY_SERVICE_URI") + "/task/{id}", Task.class, params);
 	}
 
 	public Story createTask(Integer storyId, TaskDetails message) {
@@ -26,7 +26,7 @@ public class TaskService {
 		params.put("id", storyId);
 		Task task = new Task().setDescription(message.getDescription()).setInitialHours(message.getInitialHours())
 				.setTitle(message.getTitle());
-		return template.postForObject("http://localhost:8080/story-repository/story/{id}/task", task, Story.class,
+		return template.postForObject(System.getenv("STORY_REPOSITORY_SERVICE_URI") + "/story/{id}/task", task, Story.class,
 				params);
 	}
 
@@ -34,7 +34,7 @@ public class TaskService {
 		RestTemplate template = new RestTemplate();
 		Map<String, Integer> params = new HashMap<String, Integer>();
 		params.put("id", taskId);
-		template.delete("http://localhost:8080/story-repository/task/{id}", params);
+		template.delete(System.getenv("STORY_REPOSITORY_SERVICE_URI") + "/task/{id}", params);
 	}
 
 	public Task changeTaskDetails(TaskDetails message) {
@@ -43,7 +43,7 @@ public class TaskService {
 		params.put("id", message.getTaskId());
 		Task task = getTask(message.getTaskId()).setDescription(message.getDescription())
 				.setInitialHours(message.getInitialHours()).setTitle(message.getTitle());
-		template.put("http://localhost:8080/story-repository/task/{id}", task, params);
+		template.put(System.getenv("STORY_REPOSITORY_SERVICE_URI") + "/task/{id}", task, params);
 		return getTask(message.getTaskId());
 	}
 
