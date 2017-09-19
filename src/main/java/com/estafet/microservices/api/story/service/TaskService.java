@@ -25,7 +25,7 @@ public class TaskService {
 		Map<String, Integer> params = new HashMap<String, Integer>();
 		params.put("id", storyId);
 		Task task = new Task().setDescription(message.getDescription()).setInitialHours(message.getInitialHours())
-				.setTitle(message.getTitle());
+				.setTitle(message.getTitle()).setRemainingHours(message.getInitialHours());
 		return template.postForObject(System.getenv("STORY_REPOSITORY_SERVICE_URI") + "/story/{id}/task", task, Story.class,
 				params);
 	}
