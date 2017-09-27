@@ -1,11 +1,11 @@
 package com.estafet.microservices.api.story.service;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.estafet.microservices.api.story.dao.StoryDAO;
+import com.estafet.microservices.api.story.dao.TaskDAO;
 import com.estafet.microservices.api.story.message.TaskDetails;
 import com.estafet.microservices.api.story.model.Story;
 import com.estafet.microservices.api.story.model.Task;
@@ -13,38 +13,44 @@ import com.estafet.microservices.api.story.model.Task;
 @Service
 public class TaskService {
 
+	@Autowired
+	private TaskDAO taskDAO;
+	
+	@Autowired
+	private StoryDAO storyDAO;
+	
+	@Transactional(readOnly = true)
 	public Task getTask(int taskId) {
-		RestTemplate template = new RestTemplate();
-		Map<String, Integer> params = new HashMap<String, Integer>();
-		params.put("id", taskId);
-		return template.getForObject(System.getenv("STORY_REPOSITORY_SERVICE_URI") + "/task/{id}", Task.class, params);
+		return taskDAO.getTask(taskId);
 	}
 
+	@Transactional
 	public Story createTask(Integer storyId, TaskDetails message) {
-		RestTemplate template = new RestTemplate();
-		Map<String, Integer> params = new HashMap<String, Integer>();
-		params.put("id", storyId);
 		Task task = new Task().setDescription(message.getDescription()).setInitialHours(message.getInitialHours())
 				.setTitle(message.getTitle()).setRemainingHours(message.getInitialHours());
-		return template.postForObject(System.getenv("STORY_REPOSITORY_SERVICE_URI") + "/story/{id}/task", task, Story.class,
-				params);
+		Story story = storyDAO.getStory(storyId);
+		story.addTask(task);
+		storyDAO.updateStory(story);
+		return story;
+	}
+	
+	@Transactional
+	public Task updateTask(Task updated) {
+		Task task = taskDAO.getTask(updated.getId());
+		taskDAO.updateTask(task.update(updated));
+		return task;
 	}
 
+	@Transactional
 	public void deleteTask(int taskId) {
-		RestTemplate template = new RestTemplate();
-		Map<String, Integer> params = new HashMap<String, Integer>();
-		params.put("id", taskId);
-		template.delete(System.getenv("STORY_REPOSITORY_SERVICE_URI") + "/task/{id}", params);
+		taskDAO.deleteTask(getTask(taskId));
 	}
 
+	@Transactional
 	public Task changeTaskDetails(TaskDetails message) {
-		RestTemplate template = new RestTemplate();
-		Map<String, Integer> params = new HashMap<String, Integer>();
-		params.put("id", message.getTaskId());
 		Task task = getTask(message.getTaskId()).setDescription(message.getDescription())
 				.setInitialHours(message.getInitialHours()).setTitle(message.getTitle());
-		template.put(System.getenv("STORY_REPOSITORY_SERVICE_URI") + "/task/{id}", task, params);
-		return getTask(message.getTaskId());
+		return taskDAO.updateTask(task);
 	}
 
 }

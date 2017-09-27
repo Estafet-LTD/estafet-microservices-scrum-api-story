@@ -1,29 +1,54 @@
 package com.estafet.microservices.api.story.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
+@Entity
+@Table(name = "STORY")
 public class Story {
 
+	@Id
+	@SequenceGenerator(name = "story_id_seq", sequenceName = "story_id_seq", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "story_id_seq")
+	@Column(name = "STORY_ID")
 	private int id;
 
+	@Column(name = "TITLE", nullable = false)
 	private String title;
 
+	@Column(name = "DESCRIPTION", nullable = false)
 	private String description;
 
+	@Column(name = "STORY_POINTS", nullable = false)
 	private Integer storypoints;
 
+	@Column(name = "SPRINT_ID")
 	@JsonInclude(Include.NON_NULL)
 	private Integer sprintId;
 
+	@Column(name = "PROJECT_ID", nullable = false)
 	private Integer projectId;
 
-	private List<AcceptanceCriterion> criteria = new ArrayList<AcceptanceCriterion>();
+	@OneToMany(mappedBy = "criterionStory", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	private Set<AcceptanceCriterion> criteria = new HashSet<AcceptanceCriterion>();
 
-	private List<Task> tasks = new ArrayList<Task>();
+	@OneToMany(mappedBy = "taskStory", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	private Set<Task> tasks = new HashSet<Task>();
 
 	private String status = "Not Started";
 
@@ -32,16 +57,6 @@ public class Story {
 		return this;
 	}
 	
-	public Story addTask(Task task) {
-  		tasks.add(task);
- 		if ("Not Started".equals(status)) {
- 			status = "Planning";
- 		} else if ("Completed".equals(status)) {
- 			throw new RuntimeException("Story has already been completed.");
- 		}
-  		return this;
-  	}
-
 	public Story start(int sprintId) {
 		if ("Not Started".equals(status) || "Planning".equals(status)) {
 			status = "In Progress";
@@ -63,7 +78,9 @@ public class Story {
 		if (!"Completed".equals(status)) {
 			if (tasks != null) {
 				for (Task task : tasks) {
-					task.complete();
+					if (!task.getStatus().equals("Completed")) {
+						task.complete();	
+					}
 				}
 			}
 			status = "Completed";
@@ -71,16 +88,43 @@ public class Story {
 		}
 		throw new RuntimeException("StoryDetails has already been completed.");
 	}
-
-	public Integer getSprintId() {
-		return sprintId;
+	
+	void updateStatus() {
+		for (Task task : tasks) {
+			if (!task.getStatus().equals("Completed")) {
+				return;	
+			}
+		}
+		complete();
 	}
 
-	public Integer getProjectId() {
-		return projectId;
+	public Story addAcceptanceCriterion(AcceptanceCriterion acceptanceCriterion) {
+		acceptanceCriterion.setCriterionStory(this);
+		criteria.add(acceptanceCriterion);
+		return this;
+	}
+	
+	public Story addTask(Task task) {
+		task.setTaskStory(this);
+  		tasks.add(task);
+ 		if ("Not Started".equals(status)) {
+ 			status = "Planning";
+ 		} else if ("Completed".equals(status)) {
+ 			throw new RuntimeException("Story has already been completed.");
+ 		}
+  		return this;
+  	}
+
+	public Story update(Story newStory) {
+		title = newStory.getTitle() != null ? newStory.getTitle() : title;
+		description = newStory.getDescription() != null ? newStory.getDescription() : description;
+		storypoints = newStory.getStorypoints() != null ? newStory.getStorypoints() : storypoints;
+		sprintId = newStory.sprintId;
+		projectId = newStory.projectId;
+		return this;
 	}
 
-	public List<Task> getTasks() {
+	public Set<Task> getTasks() {
 		return tasks;
 	}
 
@@ -96,25 +140,8 @@ public class Story {
 		return storypoints;
 	}
 
-	public int getId() {
-		return id;
-	}
-
-	public List<AcceptanceCriterion> getCriteria() {
-		return criteria;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public Story setProjectId(Integer projectId) {
-		this.projectId = projectId;
-		return this;
-	}
-
-	public Story setId(int id) {
-		this.id = id;
+	public Story setStorypoints(Integer storypoints) {
+		this.storypoints = storypoints;
 		return this;
 	}
 
@@ -128,9 +155,48 @@ public class Story {
 		return this;
 	}
 
-	public Story setStorypoints(Integer storypoints) {
-		this.storypoints = storypoints;
+	public int getId() {
+		return id;
+	}
+
+	public Set<AcceptanceCriterion> getCriteria() {
+		return criteria;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public Integer getProjectId() {
+		return projectId;
+	}
+
+	public Integer getSprintId() {
+		return sprintId;
+	}
+
+	public Story setProjectId(Integer projectId) {
+		this.projectId = projectId;
 		return this;
+	}
+
+	public Story setSprintId(Integer sprintId) {
+		this.sprintId = sprintId;
+		return this;
+	}
+
+	@JsonProperty
+	private void setCriteria(Set<AcceptanceCriterion> criteria) {
+		for (AcceptanceCriterion criterion : criteria) {
+			addAcceptanceCriterion(criterion);
+		}
+	}
+
+	@JsonProperty
+	private void setTasks(Set<Task> tasks) {
+		for (Task task : tasks) {
+			addTask(task);
+		}
 	}
 	
 	

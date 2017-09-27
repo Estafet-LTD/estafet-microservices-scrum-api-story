@@ -1,29 +1,15 @@
 package com.estafet.microservices.api.story.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Sprint {
 
 	private Integer id;
 
-	private String startDate;
-
-	private String endDate;
-
-	private Integer number;
 
 	public Integer getId() {
 		return id;
-	}
-
-	public String getStartDate() {
-		return startDate;
-	}
-
-	public String getEndDate() {
-		return endDate;
-	}
-
-	public Integer getNumber() {
-		return number;
 	}
 
 }

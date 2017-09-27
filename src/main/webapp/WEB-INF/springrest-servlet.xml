@@ -10,6 +10,9 @@
 		<property name="searchSystemEnvironment" value="true" />
 	</bean>
 
+	<import resource="classpath:story-api-entity-application-context.xml" />
+	<import resource="classpath:story-api-jms-application-context.xml" />
+
 	<mvc:annotation-driven />
 	<context:component-scan base-package="com.estafet.microservices.api.story" />
 

@@ -1,100 +1,111 @@
 package com.estafet.microservices.api.story.service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
+import com.estafet.microservices.api.story.dao.StoryDAO;
 import com.estafet.microservices.api.story.message.AcceptanceCriteriaDetails;
 import com.estafet.microservices.api.story.message.AddSprintStory;
 import com.estafet.microservices.api.story.message.StoryDetails;
 import com.estafet.microservices.api.story.model.AcceptanceCriterion;
-import com.estafet.microservices.api.story.model.Project;
+import com.estafet.microservices.api.story.model.Sprint;
 import com.estafet.microservices.api.story.model.Story;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class StoryService {
 
+	@Autowired
+	private StoryDAO storyDAO;
+
+	@Transactional(readOnly = true)
 	public Story getStory(int storyId) {
-		RestTemplate template = new RestTemplate();
-		Map<String, Integer> params = new HashMap<String, Integer>();
-		params.put("id", storyId);
-		return template.getForObject(System.getenv("STORY_REPOSITORY_SERVICE_URI") + "/story/{id}", Story.class, params);
+		return storyDAO.getStory(storyId);
 	}
 
-	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
 	public List<Story> getStories(int projectId) {
-		RestTemplate template = new RestTemplate();
-		Map<String, Integer> params = new HashMap<String, Integer>();
-		params.put("id", projectId);
-		return template.getForObject(System.getenv("STORY_REPOSITORY_SERVICE_URI") + "/project/{id}/stories",
-				new ArrayList<Story>().getClass(), params);
+		return storyDAO.getStories(projectId);
 	}
 
+	@Transactional(readOnly = true)
+	public List<Story> getStories(Integer projectId, Integer sprintId) {
+		return storyDAO.getStories(projectId, sprintId);
+	}
+	
+	@Transactional
 	public Story createStory(int projectId, StoryDetails message) {
-		RestTemplate template = new RestTemplate();
-		Map<String, Integer> params = new HashMap<String, Integer>();
-		params.put("id", projectId);
 		Story story = new Story().setDescription(message.getDescription()).setStorypoints(message.getStorypoints())
-				.setTitle(message.getTitle());
+				.setTitle(message.getTitle()).setProjectId(projectId);
 		for (String criteria : message.getCriteria()) {
 			story.addCriteria(criteria);
 		}
-		return template
-				.postForObject(System.getenv("STORY_REPOSITORY_SERVICE_URI") + "/project/{id}/story", story, Story.class, params)
-				.setProjectId(projectId);
+		return storyDAO.createStory(story);
 	}
 
+	@Transactional
 	public void deleteStory(int storyId) {
-		RestTemplate template = new RestTemplate();
-		Map<String, Integer> params = new HashMap<String, Integer>();
-		params.put("id", storyId);
-		template.delete(System.getenv("STORY_REPOSITORY_SERVICE_URI") + "/story/{id}", params);
+		storyDAO.deleteStory(storyDAO.getStory(storyId));
 	}
 
+	@Transactional
 	public Story addAcceptanceCriteria(Integer storyId, AcceptanceCriteriaDetails message) {
-		RestTemplate template = new RestTemplate();
-		Map<String, Integer> params = new HashMap<String, Integer>();
-		params.put("id", storyId);
-		return template.postForObject(System.getenv("STORY_REPOSITORY_SERVICE_URI") + "/story/{id}/criteria",
-				new AcceptanceCriterion().setDescription(message.getCriteria()), Story.class, params);
+		Story story = storyDAO.getStory(storyId);
+		storyDAO.updateStory(
+				story.addAcceptanceCriterion(new AcceptanceCriterion().setDescription(message.getCriteria())));
+		return story;
 	}
 
+	@Transactional
 	public Story changeStoryDetails(StoryDetails message) {
-		RestTemplate template = new RestTemplate();
-		Map<String, Integer> params = new HashMap<String, Integer>();
-		params.put("id", message.getStoryId());
 		Story story = getStory(message.getStoryId()).setDescription(message.getDescription())
 				.setStorypoints(message.getStorypoints()).setTitle(message.getTitle());
-		template.put(System.getenv("STORY_REPOSITORY_SERVICE_URI") + "/story/{id}", story, params);
-		return getStory(message.getStoryId());
+		return storyDAO.updateStory(story);
 	}
 
-	public Project getProject(int projectId) {
-		RestTemplate template = new RestTemplate();
-		Map<String, Integer> params = new HashMap<String, Integer>();
-		params.put("id", projectId);
-		return template.getForObject(System.getenv("PROJECT_REPOSITORY_SERVICE_URI") + "/project/{id}", Project.class, params);
+	@SuppressWarnings({ "rawtypes" })
+	private List<Sprint> getProjectSprints(int projectId) {
+		List objects = new RestTemplate().getForObject(System.getenv("SPRINT_API_SERVICE_URI") + "/project/{id}/sprints",
+				List.class, projectId);
+		List<Sprint> sprints = new ArrayList<Sprint>();
+		ObjectMapper mapper = new ObjectMapper();
+		for (Object object : objects) {
+			Sprint sprint = mapper.convertValue(object, new TypeReference<Sprint>() {
+			});
+			sprints.add(sprint);
+		}
+		return sprints;
+	}
+	
+	private List<Integer> getProjectSprintIds(int projectId) {
+		List<Integer> ids = new ArrayList<Integer>();
+		for (Sprint sprint : getProjectSprints(projectId)) {
+			ids.add(sprint.getId());
+		}
+		return ids;
 	}
 
+	@Transactional
 	public Story addSprintStory(AddSprintStory message) {
-		RestTemplate template = new RestTemplate();
-		Map<String, Integer> params = new HashMap<String, Integer>();
-		params.put("id", message.getStoryId());
 		Story story = getStory(message.getStoryId());
-		if (!getProject(story.getProjectId()).containsSprint(message.getSprintId())) {
+		List<Integer> ids = getProjectSprintIds(story.getProjectId());
+		if (!ids.contains(message.getSprintId())) {
 			throw new RuntimeException("Cannot add story " + story.getId() + " to sprint " + message.getSprintId());
 		}
-		template.put(System.getenv("STORY_REPOSITORY_SERVICE_URI") + "/story/{id}", story.start(message.getSprintId()), params);
-		return getStory(message.getStoryId());
+		return storyDAO.updateStory(story.start(message.getSprintId()));
 	}
 
+	@Transactional
 	public Story removeSprintStory(int storyId) {
-		RestTemplate template = new RestTemplate();
-		return template.postForObject(System.getenv("STORY_REPOSITORY_SERVICE_URI") + "/remove-story-from-sprint", new Story().setId(storyId), Story.class);
+		Story story = getStory(storyId);
+		story.setSprintId(null);
+		return storyDAO.updateStory(story);
 	}
 
 }
