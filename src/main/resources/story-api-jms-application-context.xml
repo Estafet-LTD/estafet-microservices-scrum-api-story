@@ -28,6 +28,37 @@
 		<property name="maximumActiveSessionPerConnection" value="100" />
 	</bean>
 
+	<bean id="updateStoryTopic" class="org.apache.activemq.command.ActiveMQTopic">
+		<constructor-arg value="update.story.topic" />
+	</bean>
+	
+	<bean id="updateStoryJmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+		<property name="connectionFactory" ref="pooledJmsConnectionFactory" />
+		<property name="defaultDestination" ref="updateStoryTopic" />
+		<property name="pubSubDomain" value="true" />
+	</bean>
+	
+	<bean id="updateStoryProducer"
+		class="com.estafet.microservices.api.story.jms.UpdateStoryProducer">
+		<property name="jmsTemplate" ref="updateStoryJmsTemplate" />
+	</bean>
+	
+
+	<bean id="updateTaskTopic" class="org.apache.activemq.command.ActiveMQTopic">
+		<constructor-arg value="update.task.topic" />
+	</bean>
+
+	<bean id="updateTaskJmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+		<property name="connectionFactory" ref="pooledJmsConnectionFactory" />
+		<property name="defaultDestination" ref="updateTaskTopic" />
+		<property name="pubSubDomain" value="true" />
+	</bean>
+	
+	<bean id="updateTaskProducer"
+		class="com.estafet.microservices.api.story.jms.UpdateTaskProducer">
+		<property name="jmsTemplate" ref="updateTaskJmsTemplate" />
+	</bean>
+
 	<bean id="newStoryTopic" class="org.apache.activemq.command.ActiveMQTopic">
 		<constructor-arg value="new.story.topic" />
 	</bean>

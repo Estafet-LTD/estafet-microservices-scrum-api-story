@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.estafet.microservices.api.story.dao.StoryDAO;
 import com.estafet.microservices.api.story.dao.TaskDAO;
 import com.estafet.microservices.api.story.message.TaskDetails;
+import com.estafet.microservices.api.story.message.UpdateRemainingTime;
 import com.estafet.microservices.api.story.model.Story;
 import com.estafet.microservices.api.story.model.Task;
 
@@ -15,10 +16,10 @@ public class TaskService {
 
 	@Autowired
 	private TaskDAO taskDAO;
-	
+
 	@Autowired
 	private StoryDAO storyDAO;
-	
+
 	@Transactional(readOnly = true)
 	public Task getTask(int taskId) {
 		return taskDAO.getTask(taskId);
@@ -33,7 +34,7 @@ public class TaskService {
 		storyDAO.updateStory(story);
 		return story;
 	}
-	
+
 	@Transactional
 	public Task updateTask(Task updated) {
 		Task task = taskDAO.getTask(updated.getId());
@@ -50,6 +51,13 @@ public class TaskService {
 	public Task changeTaskDetails(TaskDetails message) {
 		Task task = getTask(message.getTaskId()).setDescription(message.getDescription())
 				.setInitialHours(message.getInitialHours()).setTitle(message.getTitle());
+		return taskDAO.updateTask(task);
+	}
+
+	@Transactional
+	public Task updateRemainingTime(UpdateRemainingTime message) {
+		Task task = getTask(message.getTaskId()).setRemainingHours(message.getRemainingTime())
+				.setRemainingUpdated(message.getUpdateTime());
 		return taskDAO.updateTask(task);
 	}
 

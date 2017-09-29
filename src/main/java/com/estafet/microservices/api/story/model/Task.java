@@ -40,6 +40,10 @@ public class Task {
 	@Column(name = "STATUS", nullable = false)
 	private String status = "Not Started";
 
+	@JsonInclude(Include.NON_NULL)
+	@Column(name = "REMAINING_UPDATED")
+	private String remainingUpdated;
+
 	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "STORY_ID", nullable = false, referencedColumnName = "STORY_ID")
@@ -109,6 +113,15 @@ public class Task {
 
 	public Integer getRemainingHours() {
 		return remainingHours;
+	}
+
+	public String getRemainingUpdated() {
+		return remainingUpdated;
+	}
+
+	public Task setRemainingUpdated(String remainingUpdated) {
+		this.remainingUpdated = remainingUpdated;
+		return this;
 	}
 
 	public Task setTitle(String title) {
