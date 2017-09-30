@@ -8,9 +8,10 @@ import javax.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.estafet.microservices.api.story.jms.NewTaskProducer;
+import com.estafet.microservices.api.story.jms.UpdateTaskProducer;
 import com.estafet.microservices.api.story.model.Story;
 import com.estafet.microservices.api.story.model.Task;
-
 
 @Repository
 public class TaskDAO {
@@ -21,6 +22,12 @@ public class TaskDAO {
 	@Autowired
 	private StoryDAO storyDAO;
 	
+	@Autowired
+	private UpdateTaskProducer updateTaskProducer;
+	
+	@Autowired
+	private NewTaskProducer newTaskProducer;
+	
 	public Task getTask(int taskId) {
 		return entityManager.find(Task.class, new Integer(taskId));
 	}
@@ -29,6 +36,7 @@ public class TaskDAO {
 		Story story = storyDAO.getStory(storyId);
 		story.addTask(task);
 		entityManager.merge(story);
+		newTaskProducer.sendMessage(task);
 		return story;
 	}
 	
@@ -48,6 +56,7 @@ public class TaskDAO {
 	
 	public Task updateTask(Task task) {
 		entityManager.merge(task);
+		updateTaskProducer.sendMessage(task);
 		return task;
 	}
 	

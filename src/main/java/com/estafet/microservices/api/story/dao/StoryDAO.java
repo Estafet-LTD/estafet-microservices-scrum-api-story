@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.estafet.microservices.api.story.jms.NewStoryProducer;
+import com.estafet.microservices.api.story.jms.UpdateStoryProducer;
 import com.estafet.microservices.api.story.model.Story;
 
 @Repository
@@ -21,6 +22,9 @@ public class StoryDAO {
 	
 	@Autowired
 	private NewStoryProducer newStoryProducer;
+	
+	@Autowired
+	private UpdateStoryProducer updateStoryProducer;
 
 	public List<Story> getStories(Integer projectId) {
 		return getStories(projectId, null);
@@ -54,6 +58,7 @@ public class StoryDAO {
 
 	public Story updateStory(Story story) {
 		entityManager.merge(story);
+		updateStoryProducer.sendMessage(story);
 		return story;
 	}
 

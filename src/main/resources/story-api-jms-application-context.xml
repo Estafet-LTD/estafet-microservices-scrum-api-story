@@ -73,5 +73,21 @@
 		class="com.estafet.microservices.api.story.jms.NewStoryProducer">
 		<property name="jmsTemplate" ref="newStoryJmsTemplate" />
 	</bean>
+	
+	<bean id="newTaskTopic" class="org.apache.activemq.command.ActiveMQTopic">
+		<constructor-arg value="new.task.topic" />
+	</bean>
+
+	<bean id="newTaskJmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+		<property name="connectionFactory" ref="pooledJmsConnectionFactory" />
+		<property name="defaultDestination" ref="newTaskTopic" />
+		<property name="pubSubDomain" value="true" />
+	</bean>
+
+	<bean id="newTaskProducer"
+		class="com.estafet.microservices.api.story.jms.NewTaskProducer">
+		<property name="jmsTemplate" ref="newTaskJmsTemplate" />
+	</bean>
+	
 
 </beans>
