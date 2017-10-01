@@ -16,11 +16,6 @@ public class StoryTest {
 		assertEquals("In Progress", new Story().start(1).addTask(new Task()).getStatus());
 	}
 
-	@Test(expected = RuntimeException.class)
-	public void testAddTaskFailed() {
-		new Story().start(1).complete().addTask(new Task()).getStatus();
-	}
-
 	@Test
 	public void testStart() {
 		assertEquals("In Progress", new Story().start(1).getStatus());
@@ -31,24 +26,9 @@ public class StoryTest {
 		new Story().start(1).start(2).getStatus();
 	}
 
-	@Test
-	public void testReopen() {
-		assertEquals("Planning", new Story().start(1).complete().reopen().getStatus());
-	}
-
 	@Test(expected = RuntimeException.class)
 	public void testReopenFailed() {
 		new Story().reopen().getStatus();
-	}
-
-	@Test
-	public void testComplete() {
-		assertEquals("Completed", new Story().start(1).complete().getStatus());
-	}
-
-	@Test(expected = RuntimeException.class)
-	public void testCompleteFailed() {
-		new Story().complete().complete().getStatus();
 	}
 
 }

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 import com.estafet.microservices.api.story.jms.NewStoryProducer;
 import com.estafet.microservices.api.story.jms.UpdateStoryProducer;
 import com.estafet.microservices.api.story.model.Story;
+import com.estafet.microservices.api.story.model.Task;
 
 @Repository
 public class StoryDAO {
@@ -45,6 +46,10 @@ public class StoryDAO {
 			return stories;	
 		}
 	}
+	
+	public Task getTask(int taskId) {
+		return entityManager.find(Task.class, new Integer(taskId));
+	}
 
 	public Story getStory(int storyId) {
 		return entityManager.find(Story.class, new Integer(storyId));
@@ -60,10 +65,6 @@ public class StoryDAO {
 		entityManager.merge(story);
 		updateStoryProducer.sendMessage(story);
 		return story;
-	}
-
-	public void deleteStory(Story story) {
-		entityManager.remove(story);
 	}
 
 }

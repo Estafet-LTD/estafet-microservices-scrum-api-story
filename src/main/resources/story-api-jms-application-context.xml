@@ -42,22 +42,6 @@
 		class="com.estafet.microservices.api.story.jms.UpdateStoryProducer">
 		<property name="jmsTemplate" ref="updateStoryJmsTemplate" />
 	</bean>
-	
-
-	<bean id="updateTaskTopic" class="org.apache.activemq.command.ActiveMQTopic">
-		<constructor-arg value="update.task.topic" />
-	</bean>
-
-	<bean id="updateTaskJmsTemplate" class="org.springframework.jms.core.JmsTemplate">
-		<property name="connectionFactory" ref="pooledJmsConnectionFactory" />
-		<property name="defaultDestination" ref="updateTaskTopic" />
-		<property name="pubSubDomain" value="true" />
-	</bean>
-	
-	<bean id="updateTaskProducer"
-		class="com.estafet.microservices.api.story.jms.UpdateTaskProducer">
-		<property name="jmsTemplate" ref="updateTaskJmsTemplate" />
-	</bean>
 
 	<bean id="newStoryTopic" class="org.apache.activemq.command.ActiveMQTopic">
 		<constructor-arg value="new.story.topic" />
@@ -73,21 +57,17 @@
 		class="com.estafet.microservices.api.story.jms.NewStoryProducer">
 		<property name="jmsTemplate" ref="newStoryJmsTemplate" />
 	</bean>
-	
-	<bean id="newTaskTopic" class="org.apache.activemq.command.ActiveMQTopic">
-		<constructor-arg value="new.task.topic" />
-	</bean>
 
-	<bean id="newTaskJmsTemplate" class="org.springframework.jms.core.JmsTemplate">
-		<property name="connectionFactory" ref="pooledJmsConnectionFactory" />
-		<property name="defaultDestination" ref="newTaskTopic" />
-		<property name="pubSubDomain" value="true" />
-	</bean>
-
-	<bean id="newTaskProducer"
-		class="com.estafet.microservices.api.story.jms.NewTaskProducer">
-		<property name="jmsTemplate" ref="newTaskJmsTemplate" />
-	</bean>
+	<jms:listener-container connection-factory="pooledJmsConnectionFactory"
+		acknowledge="auto" destination-type="topic">
+		<jms:listener destination="update.task.topic" ref="updateTaskConsumer"
+			method="onMessage" />
+	</jms:listener-container>
 	
+	<jms:listener-container connection-factory="pooledJmsConnectionFactory"
+		acknowledge="auto" destination-type="topic">
+		<jms:listener destination="new.task.topic" ref="newTaskConsumer"
+			method="onMessage" />
+	</jms:listener-container>
 
 </beans>

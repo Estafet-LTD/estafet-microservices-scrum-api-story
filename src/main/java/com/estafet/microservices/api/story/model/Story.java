@@ -14,6 +14,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -47,9 +48,11 @@ public class Story {
 	@OneToMany(mappedBy = "criterionStory", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private Set<AcceptanceCriterion> criteria = new HashSet<AcceptanceCriterion>();
 
+	@JsonIgnore
 	@OneToMany(mappedBy = "taskStory", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private Set<Task> tasks = new HashSet<Task>();
 
+	@Column(name = "STATUS", nullable = false)
 	private String status = "Not Started";
 
 	public Story addCriteria(String criterion) {
@@ -74,28 +77,14 @@ public class Story {
 		throw new RuntimeException("StoryDetails has not been completed.");
 	}
 
-	public Story complete() {
-		if (!"Completed".equals(status)) {
-			if (tasks != null) {
-				for (Task task : tasks) {
-					if (!task.getStatus().equals("Completed")) {
-						task.complete();	
-					}
-				}
-			}
-			status = "Completed";
-			return this;
-		}
-		throw new RuntimeException("StoryDetails has already been completed.");
-	}
-	
-	void updateStatus() {
+	Story updateStatus() {
 		for (Task task : tasks) {
 			if (!task.getStatus().equals("Completed")) {
-				return;	
+				return this;	
 			}
 		}
-		complete();
+		status = "Completed";
+		return this;
 	}
 
 	public Story addAcceptanceCriterion(AcceptanceCriterion acceptanceCriterion) {
