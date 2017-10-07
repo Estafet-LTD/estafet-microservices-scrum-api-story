@@ -39,14 +39,14 @@ public class StoryService {
 	public List<Story> getStories(Integer projectId, Integer sprintId) {
 		return storyDAO.getStories(projectId, sprintId);
 	}
-	
+
 	@Transactional
 	public void addTask(Task task) {
 		Story story = storyDAO.getStory(task.getStoryId());
 		story.addTask(task);
 		storyDAO.updateStory(story);
 	}
-	
+
 	@Transactional
 	public void updateTask(Task updated) {
 		Task task = storyDAO.getTask(updated.getId());
@@ -59,7 +59,7 @@ public class StoryService {
 		Story story = new Story().setDescription(message.getDescription()).setStorypoints(message.getStorypoints())
 				.setTitle(message.getTitle()).setProjectId(projectId);
 		for (String criteria : message.getCriteria()) {
-			story.addCriteria(criteria);
+			story.addAcceptanceCriterion(new AcceptanceCriterion().setDescription(criteria));
 		}
 		return storyDAO.createStory(story);
 	}

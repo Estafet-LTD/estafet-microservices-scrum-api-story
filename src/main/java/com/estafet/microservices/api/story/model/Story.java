@@ -14,6 +14,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.springframework.web.client.RestTemplate;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -55,11 +57,6 @@ public class Story {
 	@Column(name = "STATUS", nullable = false)
 	private String status = "Not Started";
 
-	public Story addCriteria(String criterion) {
-		criteria.add(new AcceptanceCriterion().setDescription(criterion));
-		return this;
-	}
-	
 	public Story start(int sprintId) {
 		if ("Not Started".equals(status) || "Planning".equals(status)) {
 			status = "In Progress";
@@ -76,11 +73,17 @@ public class Story {
 		}
 		throw new RuntimeException("StoryDetails has not been completed.");
 	}
+	
+	@JsonIgnore
+	public Sprint getSprint() {
+		return new RestTemplate().getForObject(System.getenv("SPRINT_API_SERVICE_URI") + "/sprint/{id}",
+				Sprint.class, sprintId);
+	}
 
 	Story updateStatus() {
 		for (Task task : tasks) {
 			if (!task.getStatus().equals("Completed")) {
-				return this;	
+				return this;
 			}
 		}
 		status = "Completed";
@@ -88,31 +91,33 @@ public class Story {
 	}
 
 	public Story addAcceptanceCriterion(AcceptanceCriterion acceptanceCriterion) {
-		acceptanceCriterion.setCriterionStory(this);
-		criteria.add(acceptanceCriterion);
-		return this;
+		if (!"Completed".equals(status)) {
+			acceptanceCriterion.setCriterionStory(this);
+			criteria.add(acceptanceCriterion);
+			return this;
+		}
+		throw new RuntimeException("StoryDetails has already been completed.");
 	}
-	
+
 	public Story addTask(Task task) {
 		task.setTaskStory(this);
-  		tasks.add(task);
- 		if ("Not Started".equals(status)) {
- 			status = "Planning";
- 		} else if ("Completed".equals(status)) {
- 			throw new RuntimeException("Story has already been completed.");
- 		}
-  		return this;
-  	}
+		tasks.add(task);
+		if ("Not Started".equals(status)) {
+			status = "Planning";
+		} else if ("Completed".equals(status)) {
+			throw new RuntimeException("Story has already been completed.");
+		}
+		return this;
+	}
 
 	public Story update(Story newStory) {
 		title = newStory.getTitle() != null ? newStory.getTitle() : title;
 		description = newStory.getDescription() != null ? newStory.getDescription() : description;
 		storypoints = newStory.getStorypoints() != null ? newStory.getStorypoints() : storypoints;
-		sprintId = newStory.sprintId;
-		projectId = newStory.projectId;
 		return this;
 	}
 
+	@JsonIgnore
 	public Set<Task> getTasks() {
 		return tasks;
 	}
@@ -187,7 +192,5 @@ public class Story {
 			addTask(task);
 		}
 	}
-	
-	
 
 }
