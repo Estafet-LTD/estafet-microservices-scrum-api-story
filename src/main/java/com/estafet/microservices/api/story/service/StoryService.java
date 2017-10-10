@@ -24,6 +24,9 @@ public class StoryService {
 
 	@Autowired
 	private StoryDAO storyDAO;
+	
+	@Autowired
+	private RestTemplate restTemplate;
 
 	@Transactional(readOnly = true)
 	public Story getStory(int storyId) {
@@ -74,7 +77,7 @@ public class StoryService {
 
 	@SuppressWarnings({ "rawtypes" })
 	private List<Sprint> getProjectSprints(int projectId) {
-		List objects = new RestTemplate()
+		List objects = restTemplate
 				.getForObject(System.getenv("SPRINT_API_SERVICE_URI") + "/project/{id}/sprints", List.class, projectId);
 		List<Sprint> sprints = new ArrayList<Sprint>();
 		ObjectMapper mapper = new ObjectMapper();

@@ -14,8 +14,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.springframework.web.client.RestTemplate;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -73,12 +71,7 @@ public class Story {
 		}
 		throw new RuntimeException("StoryDetails has not been completed.");
 	}
-	
-	@JsonIgnore
-	public Sprint getSprint() {
-		return new RestTemplate().getForObject(System.getenv("SPRINT_API_SERVICE_URI") + "/sprint/{id}",
-				Sprint.class, sprintId);
-	}
+		
 
 	Story updateStatus() {
 		for (Task task : tasks) {

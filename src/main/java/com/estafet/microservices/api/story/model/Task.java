@@ -6,6 +6,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -22,6 +23,7 @@ public class Task {
 	@Column(name = "STATUS", nullable = false)
 	private String status = "Not Started";
 
+	@Transient
 	private Integer storyId;
 
 	@JsonIgnore
