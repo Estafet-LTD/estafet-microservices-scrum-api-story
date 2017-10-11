@@ -16,7 +16,8 @@ public class NewTaskConsumer {
 
 	@Transactional
 	@JmsListener(destination = "new.task.topic", containerFactory = "myFactory")
-	public void onMessage(Task task) {
+	public void onMessage(String message) {
+		Task task = Task.fromJSON(message);
 		storyService.addTask(task);
 	}
 

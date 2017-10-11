@@ -13,6 +13,6 @@ public class NewStoryProducer {
 	private JmsTemplate jmsTemplate;
 	
 	public void sendMessage(Story story) {
-		jmsTemplate.convertAndSend("new.story.topic", story);
+		jmsTemplate.convertAndSend("new.story.topic", story.toJSON());
 	}
 }

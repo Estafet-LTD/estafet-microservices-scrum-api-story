@@ -1,6 +1,6 @@
 package com.estafet.microservices.api.story.model;
 
-import java.io.Serializable;
+import java.io.IOException;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,16 +12,12 @@ import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Entity
 @Table(name = "TASK")
-public class Task implements Serializable {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -6037295262091167012L;
+public class Task {
 
 	@Id
 	@Column(name = "TASK_ID")
@@ -99,6 +95,14 @@ public class Task implements Serializable {
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
+	}
+	
+	public static Task fromJSON(String message) {
+		try {
+			return new ObjectMapper().readValue(message, Task.class);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 }

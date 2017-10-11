@@ -1,6 +1,5 @@
 package com.estafet.microservices.api.story.model;
 
-import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -19,15 +18,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Entity
 @Table(name = "STORY")
-public class Story implements Serializable {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -875014106939931321L;
+public class Story {
 
 	@Id
 	@SequenceGenerator(name = "story_id_seq", sequenceName = "story_id_seq", allocationSize = 1)
@@ -188,6 +184,14 @@ public class Story implements Serializable {
 	private void setTasks(Set<Task> tasks) {
 		for (Task task : tasks) {
 			addTask(task);
+		}
+	}
+	
+	public String toJSON() {
+		try {
+			return new ObjectMapper().writeValueAsString(this);
+		} catch (JsonProcessingException e) {
+			throw new RuntimeException(e);
 		}
 	}
 
