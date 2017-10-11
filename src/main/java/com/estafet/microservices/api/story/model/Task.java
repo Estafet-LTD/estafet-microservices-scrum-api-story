@@ -1,5 +1,7 @@
 package com.estafet.microservices.api.story.model;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -14,7 +16,12 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Entity
 @Table(name = "TASK")
-public class Task {
+public class Task implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6037295262091167012L;
 
 	@Id
 	@Column(name = "TASK_ID")

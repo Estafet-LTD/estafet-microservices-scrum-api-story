@@ -1,5 +1,6 @@
 package com.estafet.microservices.api.story.model;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -21,7 +22,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table(name = "STORY")
-public class Story {
+public class Story implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -875014106939931321L;
 
 	@Id
 	@SequenceGenerator(name = "story_id_seq", sequenceName = "story_id_seq", allocationSize = 1)
