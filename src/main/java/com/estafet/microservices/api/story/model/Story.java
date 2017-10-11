@@ -77,7 +77,6 @@ public class Story implements Serializable {
 		}
 		throw new RuntimeException("StoryDetails has not been completed.");
 	}
-		
 
 	Story updateStatus() {
 		for (Task task : tasks) {
