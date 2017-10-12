@@ -13,6 +13,7 @@ public class NewStoryProducer {
 	private JmsTemplate jmsTemplate;
 	
 	public void sendMessage(Story story) {
+		jmsTemplate.setPubSubDomain(true);
 		jmsTemplate.convertAndSend("new.story.topic", story.toJSON());
 	}
 }
