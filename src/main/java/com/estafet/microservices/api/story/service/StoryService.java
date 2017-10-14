@@ -44,7 +44,7 @@ public class StoryService {
 	}
 
 	@Transactional
-	public void addTask(Task task) {
+	public void newTask(Task task) {
 		Story story = storyDAO.getStory(task.getStoryId());
 		story.addTask(task);
 		storyDAO.updateStory(story);
