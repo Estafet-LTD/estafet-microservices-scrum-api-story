@@ -76,5 +76,12 @@ public class AcceptanceCriterion {
 			return false;
 		return true;
 	}
+	
+	public static AcceptanceCriterion getAPI() {
+		AcceptanceCriterion criterion = new AcceptanceCriterion();
+		criterion.id = 1;
+		criterion.description = "my criterion";
+		return criterion;
+	}
 
 }

@@ -23,6 +23,11 @@ public class StoryController {
 	@Autowired
 	private StoryService storyService;
 
+	@GetMapping("/api")
+	public Story getAPI() {
+		return Story.getAPI();
+	}
+	
 	@GetMapping("/story/{id}")
 	public Story getStory(@PathVariable int id) {
 		return storyService.getStory(id);

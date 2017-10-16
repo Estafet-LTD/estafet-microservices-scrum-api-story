@@ -194,5 +194,18 @@ public class Story {
 			throw new RuntimeException(e);
 		}
 	}
+	
+	public static Story getAPI() {
+		Story story = new Story();
+		story.id = 1;
+		story.description = "my story description";
+		story.title = "my story";
+		story.projectId = 1;
+		story.sprintId = 1;
+		story.status = "Not Started";
+		story.storypoints = 13;
+		story.criteria.add(AcceptanceCriterion.getAPI());
+		return story;
+	}
 
 }
