@@ -15,8 +15,6 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -41,7 +39,6 @@ public class Story {
 	private Integer storypoints;
 
 	@Column(name = "SPRINT_ID")
-	@JsonInclude(Include.NON_NULL)
 	private Integer sprintId;
 
 	@Column(name = "PROJECT_ID", nullable = false)
@@ -51,7 +48,7 @@ public class Story {
 	private Set<AcceptanceCriterion> criteria = new HashSet<AcceptanceCriterion>();
 
 	@JsonIgnore
-	@OneToMany(mappedBy = "taskStory", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "taskStory", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Set<Task> tasks = new HashSet<Task>();
 
 	@Column(name = "STATUS", nullable = false)

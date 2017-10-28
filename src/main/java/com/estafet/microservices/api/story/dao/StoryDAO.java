@@ -32,7 +32,7 @@ public class StoryDAO {
 	}
 	
 	public List<Story> getStories(Integer projectId, Integer sprintId) {
-		TypedQuery<Story> query = entityManager.createQuery("Select s from Story s where s.projectId = :projectId", Story.class);
+		TypedQuery<Story> query = entityManager.createQuery("Select s from Story s LEFT JOIN FETCH s.criteria where s.projectId = :projectId", Story.class);
 		List<Story> stories = query.setParameter("projectId", projectId).getResultList(); 
 		if (sprintId != null) {
 			List<Story> sprintStories = new ArrayList<Story>();
