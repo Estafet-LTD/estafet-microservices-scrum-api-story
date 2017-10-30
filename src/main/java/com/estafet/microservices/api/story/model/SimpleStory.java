@@ -83,7 +83,6 @@ public class SimpleStory {
 	}
 
 	public static List<SimpleStory> toList(List<Story> stories) {
-		System.out.println("Convert to simple list");
 		List<SimpleStory> simpleStories = new ArrayList<SimpleStory>();
 		for (Story story : stories) {
 			simpleStories.add(story.toSimple());

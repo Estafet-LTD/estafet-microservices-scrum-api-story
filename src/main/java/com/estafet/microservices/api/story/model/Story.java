@@ -44,7 +44,7 @@ public class Story {
 	@Column(name = "PROJECT_ID", nullable = false)
 	private Integer projectId;
 
-	@OneToMany(mappedBy = "criterionStory", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "criterionStory", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Set<AcceptanceCriterion> criteria = new HashSet<AcceptanceCriterion>();
 
 	@JsonIgnore

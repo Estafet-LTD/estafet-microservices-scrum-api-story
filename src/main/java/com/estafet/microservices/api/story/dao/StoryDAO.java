@@ -38,7 +38,8 @@ public class StoryDAO {
 			return query.getResultList();
 		} else {
 			TypedQuery<Story> query = entityManager.createQuery("Select s from Story s where s.projectId = :projectId", Story.class);
-			return query.setParameter("projectId", projectId).getResultList(); 
+			query.setParameter("projectId", projectId); 
+			return query.getResultList();
 		}
 	}
 	
