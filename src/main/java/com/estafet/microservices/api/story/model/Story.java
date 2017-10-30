@@ -44,6 +44,7 @@ public class Story {
 	@Column(name = "PROJECT_ID", nullable = false)
 	private Integer projectId;
 
+	@JsonIgnore
 	@OneToMany(mappedBy = "criterionStory", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private Set<AcceptanceCriterion> criteria = new HashSet<AcceptanceCriterion>();
 
@@ -183,7 +184,7 @@ public class Story {
 			addTask(task);
 		}
 	}
-	
+
 	public String toJSON() {
 		try {
 			return new ObjectMapper().writeValueAsString(this);
@@ -191,7 +192,7 @@ public class Story {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	public static Story getAPI() {
 		Story story = new Story();
 		story.id = 1;
@@ -203,6 +204,17 @@ public class Story {
 		story.storypoints = 13;
 		story.criteria.add(AcceptanceCriterion.getAPI());
 		return story;
+	}
+
+	public SimpleStory toSimple() {
+		return new SimpleStory()
+				.setId(id)
+				.setDescription(description)
+				.setProjectId(projectId)
+				.setSprintId(sprintId)
+				.setStatus(status)
+				.setStorypoints(storypoints)
+				.setTitle(title);
 	}
 
 }

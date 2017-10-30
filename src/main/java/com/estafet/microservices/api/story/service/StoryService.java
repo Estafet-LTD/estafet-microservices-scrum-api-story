@@ -13,6 +13,7 @@ import com.estafet.microservices.api.story.message.AcceptanceCriteriaDetails;
 import com.estafet.microservices.api.story.message.AddSprintStory;
 import com.estafet.microservices.api.story.message.StoryDetails;
 import com.estafet.microservices.api.story.model.AcceptanceCriterion;
+import com.estafet.microservices.api.story.model.SimpleStory;
 import com.estafet.microservices.api.story.model.Sprint;
 import com.estafet.microservices.api.story.model.Story;
 import com.estafet.microservices.api.story.model.Task;
@@ -34,13 +35,13 @@ public class StoryService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<Story> getStories(int projectId) {
-		return storyDAO.getStories(projectId);
+	public List<SimpleStory> getStories(int projectId) {
+		return SimpleStory.toList(storyDAO.getStories(projectId));
 	}
 
 	@Transactional(readOnly = true)
-	public List<Story> getStories(Integer projectId, Integer sprintId) {
-		return storyDAO.getStories(projectId, sprintId);
+	public List<SimpleStory> getStories(Integer projectId, Integer sprintId) {
+		return SimpleStory.toList(storyDAO.getStories(projectId, sprintId));
 	}
 
 	@Transactional
