@@ -1,6 +1,5 @@
 package com.estafet.microservices.api.story.dao;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -32,18 +31,14 @@ public class StoryDAO {
 	}
 	
 	public List<Story> getStories(Integer projectId, Integer sprintId) {
-		TypedQuery<Story> query = entityManager.createQuery("Select s from Story s where s.projectId = :projectId", Story.class);
-		List<Story> stories = query.setParameter("projectId", projectId).getResultList(); 
 		if (sprintId != null) {
-			List<Story> sprintStories = new ArrayList<Story>();
-			for (Story story : stories) {
-				if (story.getSprintId() != null && story.getSprintId().equals(sprintId)) {
-					sprintStories.add(story);
-				}
-			}
-			return sprintStories;
+			TypedQuery<Story> query = entityManager.createQuery("Select s from Story s where s.projectId = :projectId and s.sprintId = :sprintId", Story.class);
+			query.setParameter("projectId", projectId);
+			query.setParameter("sprintId", sprintId); 
+			return query.getResultList();
 		} else {
-			return stories;	
+			TypedQuery<Story> query = entityManager.createQuery("Select s from Story s where s.projectId = :projectId", Story.class);
+			return query.setParameter("projectId", projectId).getResultList(); 
 		}
 	}
 	
