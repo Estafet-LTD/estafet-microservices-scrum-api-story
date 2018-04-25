@@ -8,5 +8,5 @@
       shell: "oc login --insecure-skip-tls-verify=true -u {{ username }} -p {{ password }} {{ openshift }}"
       tags:
         - openshift
-        
+    - set_fact: workdir="{{ playbook_dir }}"
     - include_tasks: create-app-tasks.yml        
