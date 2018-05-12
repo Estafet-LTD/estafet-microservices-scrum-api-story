@@ -2,6 +2,8 @@ node("maven") {
 
 	def project = "dev"
 	def microservice = "story-api"
+	
+	currentBuild.description = "Build a container from the source, then execute unit and container integration tests before promoting the container as a release candidate for acceptance testing."
 
 	stage("checkout") {
 		git branch: "master", url: "https://github.com/Estafet-LTD/estafet-microservices-scrum-api-story"

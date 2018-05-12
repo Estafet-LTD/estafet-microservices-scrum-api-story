@@ -96,20 +96,18 @@ public class ITStoryTest {
 	@DatabaseSetup("ITStoryTest-data.xml")
 	public void testGetStories() {
 		get("/project/1/stories").then()
-		.body("id", hasItems(1000))
-		.body("title", hasItems("Task #1"))
-		.body("description", hasItems("Task #1"))
-		.body("initialHours", hasItems(13))
-		.body("remainingHours", hasItems(13))
-		.body("status", hasItems("Not Started"));
+			.body("id", hasItems(1000))
+			.body("title", hasItems("Story #1"))
+			.body("description", hasItems("Story #1"))
+			.body("status", hasItems("Not Started"));
 	}
 
 	@Test
 	@DatabaseSetup("ITStoryTest-data.xml")
 	public void testAddAcceptanceCriteria() {
 		given()
-		.contentType(ContentType.JSON)
-		.body("{\"title\":\"Task #3\",\"description\":\"Task #3\",\"initialHours\":5}")
+			.contentType(ContentType.JSON)
+			.body("{\"title\":\"Task #3\",\"description\":\"Task #3\",\"initialHours\":5}")
 		.when()
 			.post("/story/1000/task")
 		.then()
