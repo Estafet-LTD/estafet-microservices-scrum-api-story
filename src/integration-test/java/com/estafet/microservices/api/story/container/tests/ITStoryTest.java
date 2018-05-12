@@ -112,14 +112,14 @@ public class ITStoryTest {
 			.body("title", is("Story #1"))
 			.body("description", is("Story #1"))
 			.body("status", is("Not Started"))
-			.body("crtieria.description", hasItems("Crtieria #10"));
+			.body("criteria", hasItems("Criteria #10"));
 	
 		get("/story/1000").then()
 			.body("id", is(1000))
 			.body("title", is("Story #1"))
 			.body("description", is("Story #1"))
 			.body("status", is("Not Started"))
-			.body("crtieria.description", hasItems("Crtieria #10"));
+			.body("criteria.description", hasItems("Criteria #10"));
 	}
 
 	@Ignore
