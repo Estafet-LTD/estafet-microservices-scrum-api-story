@@ -112,7 +112,7 @@ public class ITStoryTest {
 			.body("title", is("Story #1"))
 			.body("description", is("Story #1"))
 			.body("status", is("Not Started"))
-			.body("criteria", hasItems("Criteria #10"));
+			.body("criteria.description", hasItems("Criteria #10"));
 	
 		get("/story/1000").then()
 			.body("id", is(1000))
@@ -122,7 +122,6 @@ public class ITStoryTest {
 			.body("criteria.description", hasItems("Criteria #10"));
 	}
 
-	@Ignore
 	@Test
 	@DatabaseSetup("ITStoryTest-data.xml")
 	public void testAddSprintStory() {
