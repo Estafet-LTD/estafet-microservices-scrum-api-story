@@ -41,13 +41,13 @@ public class ITStoryTest {
 	public void testGetAPI() {
 		get("/api").then()
 			.body("id", is(1))
-			.body("title", is("some test story"))
-			.body("description", is("hghghg"))
-			.body("storypoints", is(5))
+			.body("title", is("my story"))
+			.body("description", is("my story description"))
+			.body("storypoints", is(13))
 			.body("sprintId", is(1))
 			.body("projectId", is(1))
-			.body("criteria.id", hasItems(1,2))
-			.body("criteria.description", hasItems("hghghg","jhjhjh"));
+			.body("criteria.id", hasItems(1))
+			.body("criteria.description", hasItems("my criterion"));
 	}
 
 	@Test
@@ -96,12 +96,12 @@ public class ITStoryTest {
 	@DatabaseSetup("ITStoryTest-data.xml")
 	public void testGetStories() {
 		get("/project/1/stories").then()
-		.body("id", is(1000))
-		.body("title", is("Task #1"))
-		.body("description", is("Task #1"))
-		.body("initialHours", is(13))
-		.body("remainingHours", is(13))
-		.body("status", is("Not Started"));
+		.body("id", hasItems(1000))
+		.body("title", hasItems("Task #1"))
+		.body("description", hasItems("Task #1"))
+		.body("initialHours", hasItems(13))
+		.body("remainingHours", hasItems(13))
+		.body("status", hasItems("Not Started"));
 	}
 
 	@Test
