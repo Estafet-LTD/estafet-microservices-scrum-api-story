@@ -67,7 +67,7 @@ public class ITStoryTest {
 	public void testCreateStory() {
 		given()
 			.contentType(ContentType.JSON)
-			.body("{\"title\":\"My Story\",\"description\":\"My Story\",\"storypoints\":5, \"criteria\": [{\"description\": \"Crtieria #1\"}, {\"description\": \"Crtieria #2\"}, {\"description\": \"Crtieria #3\"} ]}")
+			.body("{\"title\":\"My Story\",\"description\":\"My Story\",\"storypoints\":5, \"criteria\": [{\"Crtieria #1\"}, {\"Crtieria #2\"}, {\"Crtieria #3\"} ]}")
 		.when()
 			.post("/project/1/story")
 		.then()
@@ -113,14 +113,14 @@ public class ITStoryTest {
 			.post("/story/1000/criteria")
 		.then()
 			.statusCode(HttpURLConnection.HTTP_OK)
-			.body("id", is(1))
+			.body("id", is(1000))
 			.body("title", is("Story #1"))
 			.body("description", is("Story #1"))
 			.body("status", is("Not Started"))
 			.body("crtieria.description", hasItems("Crtieria #10"));
 	
 		get("/story/1000").then()
-			.body("id", is(1))
+			.body("id", is(1000))
 			.body("title", is("Story #1"))
 			.body("description", is("Story #1"))
 			.body("status", is("Not Started"))
