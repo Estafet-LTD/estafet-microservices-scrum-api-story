@@ -28,6 +28,7 @@ import io.restassured.http.ContentType;
 public class ITStoryTest {
 
 	NewStoryTopicConsumer newStoryTopicConsumer;
+	UpdatedStoryTopicConsumer updatedStoryTopicConsumer;
 	
 	@Before
 	public void before() {
@@ -38,11 +39,13 @@ public class ITStoryTest {
 	@After
 	public void after() {
 		newStoryTopicConsumer.closeConnection();
+		updatedStoryTopicConsumer.closeConnection();
 	}
 
 	@Test
 	public void testGetAPI() {
 		get("/api").then()
+			.statusCode(HttpURLConnection.HTTP_OK)
 			.body("id", is(1))
 			.body("title", is("my story"))
 			.body("description", is("my story description"))
@@ -57,6 +60,7 @@ public class ITStoryTest {
 	@DatabaseSetup("ITStoryTest-data.xml")
 	public void testGetStory() {
 		get("/story/1000").then()
+		.statusCode(HttpURLConnection.HTTP_OK)
 			.body("id", is(1000))
 			.body("title", is("Story #1"))
 			.body("description", is("Story #1"))
@@ -83,6 +87,7 @@ public class ITStoryTest {
 			.body("status", is("Not Started"));
 	
 		get("/story/1").then()
+			.statusCode(HttpURLConnection.HTTP_OK)
 			.body("id", is(1))
 			.body("title", is("My Story"))
 			.body("description", is("My Story"))
@@ -100,6 +105,7 @@ public class ITStoryTest {
 	@DatabaseSetup("ITStoryTest-data.xml")
 	public void testGetStories() {
 		get("/project/1/stories").then()
+			.statusCode(HttpURLConnection.HTTP_OK)
 			.body("id", hasItems(1000))
 			.body("title", hasItems("Story #1"))
 			.body("description", hasItems("Story #1"))
@@ -123,11 +129,17 @@ public class ITStoryTest {
 			.body("criteria.description", hasItems("Criteria #10"));
 	
 		get("/story/1000").then()
+			.statusCode(HttpURLConnection.HTTP_OK)
 			.body("id", is(1000))
 			.body("title", is("Story #1"))
 			.body("description", is("Story #1"))
 			.body("status", is("Not Started"))
 			.body("criteria.description", hasItems("Criteria #10"));
+		
+		Story story = updatedStoryTopicConsumer.consume(Story.class);
+		assertThat(story.getId(), is(1000));
+		assertThat(story.getTitle(), is("Story #1"));
+		assertThat(story.getStatus(), is("Not Started"));
 	}
 
 	@Test
@@ -146,10 +158,16 @@ public class ITStoryTest {
 			.body("status", is("In Progress"));
 	
 		get("/story/1000").then()
+			.statusCode(HttpURLConnection.HTTP_OK)
 			.body("id", is(1000))
 			.body("title", is("Story #1"))
 			.body("description", is("Story #1"))
 			.body("status", is("In Progress"));
+		
+		Story story = updatedStoryTopicConsumer.consume(Story.class);
+		assertThat(story.getId(), is(1000));
+		assertThat(story.getTitle(), is("Story #1"));
+		assertThat(story.getStatus(), is("In Progress"));
 	}
 
 }
