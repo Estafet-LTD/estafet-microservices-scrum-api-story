@@ -16,6 +16,7 @@ import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
+import com.estafet.microservices.api.story.model.Story;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -28,13 +29,17 @@ import io.restassured.http.ContentType;
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
 public class ITStoryTest {
 
+	NewStoryTopicConsumer newStoryTopicConsumer;
+	
 	@Before
 	public void before() {
 		RestAssured.baseURI = System.getenv("STORY_API_SERVICE_URI");
+		newStoryTopicConsumer = new NewStoryTopicConsumer();
 	}
 
 	@After
 	public void after() {
+		newStoryTopicConsumer.closeConnection();
 	}
 
 	@Test
@@ -86,6 +91,11 @@ public class ITStoryTest {
 			.body("storypoints", is(5))
 			.body("projectId", is(1))
 			.body("status", is("Not Started"));
+		
+		Story story = newStoryTopicConsumer.consume(Story.class);
+		assertThat(story.getId(), is(1));
+		assertThat(story.getTitle(), is("My Story"));
+		assertThat(story.getDescription(), is("My Story"));
 	}
 
 	@Test
