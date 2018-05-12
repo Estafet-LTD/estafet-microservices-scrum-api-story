@@ -137,7 +137,7 @@ public class ITStoryTest {
 			.body("description", is("Story #1"))
 			.body("status", is("In Progress"));
 	
-		get("/task/1001").then()
+		get("/story/1001").then()
 			.body("id", is(1000))
 			.body("title", is("Story #1"))
 			.body("description", is("Story #1"))
