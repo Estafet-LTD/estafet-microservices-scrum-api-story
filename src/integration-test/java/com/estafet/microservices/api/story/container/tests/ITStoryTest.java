@@ -127,24 +127,21 @@ public class ITStoryTest {
 	public void testAddSprintStory() {
 		given()
 			.contentType(ContentType.JSON)
-			.body("{\"remainingHours\":5}")
+			.body("{\"storyId\":1000,\"sprintId\":1}")
 		.when()
-			.put("/task/1001/remainingHours")
+			.post("/add-story-to-sprint")
 		.then()
 			.statusCode(HttpURLConnection.HTTP_OK)
-			.body("id", is(1001))
-			.body("title", is("Task #2"))
-			.body("description", is("Task #2"))
-			.body("initialHours", is(20))
-			.body("remainingHours", is(5));
+			.body("id", is(1000))
+			.body("title", is("Story #1"))
+			.body("description", is("Story #1"))
+			.body("status", is("In Progress"));
 	
 		get("/task/1001").then()
-			.body("id", is(1001))
-			.body("title", is("Task #2"))
-			.body("description", is("Task #2"))
-			.body("initialHours", is(20))
-			.body("remainingHours", is(5))
-			.body("status", is("Not Started"));
+			.body("id", is(1000))
+			.body("title", is("Story #1"))
+			.body("description", is("Story #1"))
+			.body("status", is("In Progress"));
 	}
 
 }
