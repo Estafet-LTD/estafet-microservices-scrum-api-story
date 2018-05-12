@@ -28,7 +28,7 @@ import io.opentracing.contrib.jms.spring.TracingJmsTemplate;
 @EnableAutoConfiguration
 @SpringBootApplication
 @EnableJms
-@EnableDiscoveryClient
+//@EnableDiscoveryClient
 public class Application extends SpringBootServletInitializer {
 
 	public static void main(String[] args) {
@@ -45,11 +45,6 @@ public class Application extends SpringBootServletInitializer {
 	@Bean
 	public MessageConverter tracingJmsMessageConverter(Tracer tracer) {
 		return new PropagatingTracingMessageConverter(new SimpleMessageConverter(), tracer);
-	}
-
-	@Bean
-	public RestTemplate restTemplate(RestTemplateBuilder restTemplateBuilder) {
-		return restTemplateBuilder.build();
 	}
 
 	@Bean

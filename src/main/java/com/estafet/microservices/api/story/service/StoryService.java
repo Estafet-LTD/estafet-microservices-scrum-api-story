@@ -6,8 +6,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 
+import com.estafet.microservices.api.story.dao.SprintDAO;
 import com.estafet.microservices.api.story.dao.StoryDAO;
 import com.estafet.microservices.api.story.message.AcceptanceCriteriaDetails;
 import com.estafet.microservices.api.story.message.AddSprintStory;
@@ -17,8 +17,6 @@ import com.estafet.microservices.api.story.model.SimpleStory;
 import com.estafet.microservices.api.story.model.Sprint;
 import com.estafet.microservices.api.story.model.Story;
 import com.estafet.microservices.api.story.model.Task;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class StoryService {
@@ -27,7 +25,7 @@ public class StoryService {
 	private StoryDAO storyDAO;
 	
 	@Autowired
-	private RestTemplate restTemplate;
+	private SprintDAO sprintDAO;
 
 	@Transactional(readOnly = true)
 	public Story getStory(int storyId) {
@@ -76,23 +74,9 @@ public class StoryService {
 		return story;
 	}
 
-	@SuppressWarnings({ "rawtypes" })
-	private List<Sprint> getProjectSprints(int projectId) {
-		List objects = restTemplate
-				.getForObject(System.getenv("SPRINT_API_SERVICE_URI") + "/project/{id}/sprints", List.class, projectId);
-		List<Sprint> sprints = new ArrayList<Sprint>();
-		ObjectMapper mapper = new ObjectMapper();
-		for (Object object : objects) {
-			Sprint sprint = mapper.convertValue(object, new TypeReference<Sprint>() {
-			});
-			sprints.add(sprint);
-		}
-		return sprints;
-	}
-
 	private List<Integer> getProjectSprintIds(int projectId) {
 		List<Integer> ids = new ArrayList<Integer>();
-		for (Sprint sprint : getProjectSprints(projectId)) {
+		for (Sprint sprint : sprintDAO.getProjectSprints(projectId)) {
 			ids.add(sprint.getId());
 		}
 		return ids;
@@ -106,6 +90,16 @@ public class StoryService {
 			throw new RuntimeException("Cannot add story " + story.getId() + " to sprint " + message.getSprintId());
 		}
 		return storyDAO.updateStory(story.start(message.getSprintId()));
+	}
+
+	@Transactional
+	public void updateSprint(Sprint sprint) {
+		sprintDAO.updateSprint(sprint);
+	}
+
+	@Transactional
+	public void newSprint(Sprint sprint) {
+		sprintDAO.createSprint(sprint);
 	}
 
 }

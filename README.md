@@ -91,15 +91,13 @@ POST http://story-api/add-story-to-sprint
 
 ## Environment Variables
 ```
-JBOSS_A_MQ_BROKER_URL=tcp://localhost:61616
-JBOSS_A_MQ_BROKER_USER=estafet
-JBOSS_A_MQ_BROKER_PASSWORD=estafet
+JBOSS_A_MQ_BROKER_URL
+JBOSS_A_MQ_BROKER_USER
+JBOSS_A_MQ_BROKER_PASSWORD
 
-STORY_API_JDBC_URL=jdbc:postgresql://localhost:5432/story-api
-STORY_API_DB_USER=postgres
-STORY_API_DB_PASSWORD=welcome1
-
-SPRINT_API_SERVICE_URI=http://localhost:8080/sprint-api
+STORY_API_JDBC_URL
+STORY_API_DB_USER
+STORY_API_DB_PASSWORD
 ```
 
 ## Domain Model States

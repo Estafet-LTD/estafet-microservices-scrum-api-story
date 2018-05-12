@@ -8,8 +8,11 @@ node("maven") {
 	}
 
 	stage("build and execute unit tests") {
-		sh "mvn clean test"
-		junit "**/target/surefire-reports/*.xml"
+		try {
+			sh "mvn clean test"
+		} finally {
+			junit "**/target/surefire-reports/*.xml"
+		}
 	}
 
 	stage("update the database schema") {
@@ -21,29 +24,38 @@ node("maven") {
 		sh "oc exec ${pod}  -n ${project} -- /bin/sh -i -c \"psql -d ${microservice} -U postgres -f /tmp/create-${microservice}-db.ddl\""
 	}
 
-	stage("build & deploy container") {
-		openshiftBuild namespace: project, buildConfig: microservice, showBuildLogs: "true",  waitTime: "3000000"
+	stage("reset a-mq to purge topics") {
+		openshiftDeploy namespace: project, depCfg: "broker-amq", showBuildLogs: "true",  waitTime: "3000000"
+		openshiftVerifyDeployment namespace: project, depCfg: "broker-amq", replicaCount:"1", verifyReplicaCount: "true", waitTime: "300000"
 	}
-  	  
-	stage("verify container deployment") {
+
+	stage("build & deploy container") {
+		openshiftBuild namespace: project, buildConfig: microservice, showBuildLogs: "true",  waitTime: "300000"
 		sh "oc set env dc/${microservice} JBOSS_A_MQ_BROKER_URL=tcp://broker-amq-tcp.${project}.svc:61616 -n ${project}"
-		openshiftVerifyDeployment namespace: project, depCfg: microservice, replicaCount:"1", verifyReplicaCount: "true", waitTime: "300000"	
+		openshiftVerifyDeployment namespace: project, depCfg: microservice, replicaCount:"1", verifyReplicaCount: "true", waitTime: "600000"
 	}
 
 	stage("execute the container tests") {
-		withEnv(
-			[	"STORY_API_JDBC_URL=jdbc:postgresql://postgresql.${project}.svc:5432/${microservice}", 
-				"STORY_API_DB_USER=postgres", 
-				"STORY_API_DB_PASSWORD=welcome1",
-				"STORY_API_SERVICE_URI=http://${microservice}.${project}.svc:8080",
-				"JBOSS_A_MQ_BROKER_URL=tcp://broker-amq-tcp.${project}.svc:61616",
-				"JBOSS_A_MQ_BROKER_USER=amq",
-				"JBOSS_A_MQ_BROKER_PASSWORD=amq"
-			]) {
-			sh "mvn clean verify -P integration-test"
+		try {
+			withEnv(
+				[	"STORY_API_JDBC_URL=jdbc:postgresql://postgresql.${project}.svc:5432/${microservice}", 
+					"STORY_API_DB_USER=postgres", 
+					"STORY_API_DB_PASSWORD=welcome1",
+					"STORY_API_SERVICE_URI=http://${microservice}.${project}.svc:8080",
+					"JBOSS_A_MQ_BROKER_URL=tcp://broker-amq-tcp.${project}.svc:61616",
+					"JBOSS_A_MQ_BROKER_USER=amq",
+					"JBOSS_A_MQ_BROKER_PASSWORD=amq"
+				]) {
+				sh "mvn clean verify -P integration-test"
+			}
+			sh "oc set env dc/${microservice} JBOSS_A_MQ_BROKER_URL=tcp://broker-amq-tcp.${project}.svc:61616 -n ${project}"		
+		} finally {
+			junit "**/target/failsafe-reports/*.xml"
 		}
-		sh "oc set env dc/${microservice} JBOSS_A_MQ_BROKER_URL=tcp://broker-amq-tcp.${project}.svc:61616 -n ${project}"
-		junit "**/target/failsafe-reports/*.xml"
+	}
+	
+	stage("tag container for testing") {
+		openshiftTag namespace: project, srcStream: microservice, srcTag: 'latest', destinationNamespace: 'test', destinationStream: microservice, destinationTag: 'PrepareForTesting'
 	}
 
 }
