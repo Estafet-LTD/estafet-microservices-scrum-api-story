@@ -8,7 +8,6 @@ import java.net.HttpURLConnection;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -17,7 +16,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import com.estafet.microservices.api.story.model.Story;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
@@ -147,7 +145,7 @@ public class ITStoryTest {
 			.body("description", is("Story #1"))
 			.body("status", is("In Progress"));
 	
-		get("/story/1001").then()
+		get("/story/1000").then()
 			.body("id", is(1000))
 			.body("title", is("Story #1"))
 			.body("description", is("Story #1"))
