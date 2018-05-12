@@ -105,28 +105,26 @@ public class ITStoryTest {
 	@Test
 	@DatabaseSetup("ITStoryTest-data.xml")
 	public void testAddAcceptanceCriteria() {
+		
 		given()
 			.contentType(ContentType.JSON)
-			.body("{\"title\":\"Task #3\",\"description\":\"Task #3\",\"initialHours\":5}")
+			.body("{\"criteria\":\"Criteria #10\"}")
 		.when()
-			.post("/story/1000/task")
+			.post("/story/1000/criteria")
 		.then()
 			.statusCode(HttpURLConnection.HTTP_OK)
 			.body("id", is(1))
-			.body("title", is("Task #3"))
-			.body("description", is("Task #3"))
-			.body("initialHours", is(5))
-			.body("remainingHours", is(5))
-			.body("status", is("Not Started"));
+			.body("title", is("Story #1"))
+			.body("description", is("Story #1"))
+			.body("status", is("Not Started"))
+			.body("crtieria.description", hasItems("Crtieria #10"));
 	
-		get("/task/1").then()
+		get("/story/1000").then()
 			.body("id", is(1))
-			.body("title", is("Task #3"))
-			.body("description", is("Task #3"))
-			.body("initialHours", is(5))
-			.body("remainingHours", is(5))
-			.body("status", is("Not Started"));
-
+			.body("title", is("Story #1"))
+			.body("description", is("Story #1"))
+			.body("status", is("Not Started"))
+			.body("crtieria.description", hasItems("Crtieria #10"));
 	}
 
 	@Ignore
