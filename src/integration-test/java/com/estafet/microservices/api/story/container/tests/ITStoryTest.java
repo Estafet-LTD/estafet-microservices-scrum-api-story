@@ -77,8 +77,7 @@ public class ITStoryTest {
 			.body("description", is("My Story"))
 			.body("storypoints", is(5))
 			.body("projectId", is(1))
-			.body("status", is("Not Started"))
-			.body("crtieria.id", hasItems(1,2,3));
+			.body("status", is("Not Started"));
 	
 		get("/story/1").then()
 			.body("id", is(1))
@@ -86,8 +85,7 @@ public class ITStoryTest {
 			.body("description", is("My Story"))
 			.body("storypoints", is(5))
 			.body("projectId", is(1))
-			.body("status", is("Not Started"))
-			.body("crtieria.id", hasItems(1,2,3));
+			.body("status", is("Not Started"));
 	}
 
 	@Test
