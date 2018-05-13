@@ -1,4 +1,4 @@
-node("maven") {
+node {
 
 	def project = "dev"
 	def microservice = "story-api"
@@ -10,11 +10,9 @@ node("maven") {
 	}
 
 	stage("build and execute unit tests") {
-		try {
-			sh "mvn clean test"
-		} finally {
-			junit "**/target/surefire-reports/*.xml"
-		}
+		withMaven(maven: 'M3', mavenSettingsConfig: 'MySettings', mavenLocalRepo: '.repository') {
+	      sh "mvn clean install"
+	    } 
 	}
 
 	stage("update the database schema") {
