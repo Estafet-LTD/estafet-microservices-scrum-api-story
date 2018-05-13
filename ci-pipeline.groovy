@@ -50,8 +50,8 @@ node("maven") {
 				]) {
 				sh "mvn clean verify -P integration-test"
 			}
-			sh "oc set env dc/${microservice} JBOSS_A_MQ_BROKER_URL=tcp://broker-amq-tcp.${project}.svc:61616 -n ${project}"		
 		} finally {
+			sh "oc set env dc/${microservice} JBOSS_A_MQ_BROKER_URL=tcp://broker-amq-tcp.${project}.svc:61616 -n ${project}"
 			junit "**/target/failsafe-reports/*.xml"
 		}
 	}
