@@ -9,7 +9,7 @@ node('maven') {
 		git branch: "master", url: "https://github.com/Estafet-LTD/estafet-microservices-scrum-api-story"
 	}
 
-	stage("build and execute unit tests") {
+	stage("unit tests") {
 		withMaven(mavenSettingsConfig: 'microservices-scrum') {
 	      sh "mvn clean test"
 	    } 
@@ -51,10 +51,13 @@ node('maven') {
     	}
 	}
 	
-	stage("tag container for testing") {
+	stage("deploy snapshots") {
 		withMaven(mavenSettingsConfig: 'microservices-scrum') {
  			sh "mvn clean deploy -Dmaven.test.skip=true"
 		} 
+	}	
+	
+	stage("tag container for testing") {
 		openshiftTag namespace: project, srcStream: microservice, srcTag: 'latest', destinationNamespace: 'test', destinationStream: microservice, destinationTag: 'PrepareForTesting'
 	}
 
