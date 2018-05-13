@@ -10,7 +10,7 @@ node('maven') {
 	}
 
 	stage("build and execute unit tests") {
-		withMaven() {
+		withMaven(mavenSettingsConfig: '2e385002-b90c-48fa-b0ab-49c7e4da1fd8') {
 	      sh "mvn clean install"
 	    } 
 	}
