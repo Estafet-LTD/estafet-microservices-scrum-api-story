@@ -11,7 +11,7 @@ node('maven') {
 
 	stage("build and execute unit tests") {
 		withMaven(mavenSettingsConfig: 'microservices-scrum') {
-	      sh "mvn clean install"
+	      sh "mvn clean test"
 	    } 
 	}
 
@@ -52,6 +52,9 @@ node('maven') {
 	}
 	
 	stage("tag container for testing") {
+		withMaven(mavenSettingsConfig: 'microservices-scrum') {
+ 			sh "mvn clean deploy -Dmaven.test.skip=true"
+		} 
 		openshiftTag namespace: project, srcStream: microservice, srcTag: 'latest', destinationNamespace: 'test', destinationStream: microservice, destinationTag: 'PrepareForTesting'
 	}
 
