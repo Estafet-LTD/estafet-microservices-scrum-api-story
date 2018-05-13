@@ -10,11 +10,9 @@ node("maven") {
 	}
 
 	stage("build and execute unit tests") {
-		try {
-			sh "mvn clean test"
-		} finally {
-			junit "**/target/surefire-reports/*.xml"
-		}
+		withMaven(maven: 'M3', mavenSettingsConfig: 'MySettings', mavenLocalRepo: '.repository') {
+	      sh "mvn clean install"
+	    } 
 	}
 
 	stage("update the database schema") {
@@ -48,11 +46,12 @@ node("maven") {
 					"JBOSS_A_MQ_BROKER_USER=amq",
 					"JBOSS_A_MQ_BROKER_PASSWORD=amq"
 				]) {
-				sh "mvn clean verify -P integration-test"
-			}
-			sh "oc set env dc/${microservice} JBOSS_A_MQ_BROKER_URL=tcp://broker-amq-tcp.${project}.svc:61616 -n ${project}"		
+				withMaven(maven: 'M3', mavenSettingsConfig: 'MySettings', mavenLocalRepo: '.repository') {
+	      			sh "mvn clean verify -P integration-test"
+	    		} 
+			}		
 		} finally {
-			junit "**/target/failsafe-reports/*.xml"
+			sh "oc set env dc/${microservice} JBOSS_A_MQ_BROKER_URL=tcp://broker-amq-tcp.${project}.svc:61616 -n ${project}"
 		}
 	}
 	
