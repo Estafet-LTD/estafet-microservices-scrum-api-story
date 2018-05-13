@@ -10,7 +10,7 @@ node('maven') {
 	}
 
 	stage("build and execute unit tests") {
-		withMaven(mavenSettingsConfig: '2e385002-b90c-48fa-b0ab-49c7e4da1fd8') {
+		withMaven(mavenSettingsConfig: 'microservices-scrum') {
 	      sh "mvn clean install"
 	    } 
 	}
@@ -36,22 +36,19 @@ node('maven') {
 	}
 
 	stage("execute the container tests") {
-		try {
-			withEnv(
-				[	"STORY_API_JDBC_URL=jdbc:postgresql://postgresql.${project}.svc:5432/${microservice}", 
-					"STORY_API_DB_USER=postgres", 
-					"STORY_API_DB_PASSWORD=welcome1",
-					"STORY_API_SERVICE_URI=http://${microservice}.${project}.svc:8080",
-					"JBOSS_A_MQ_BROKER_URL=tcp://broker-amq-tcp.${project}.svc:61616",
-					"JBOSS_A_MQ_BROKER_USER=amq",
-					"JBOSS_A_MQ_BROKER_PASSWORD=amq"
-				]) {
-				sh "mvn clean verify -P integration-test"
-			}
-		} finally {
-			sh "oc set env dc/${microservice} JBOSS_A_MQ_BROKER_URL=tcp://broker-amq-tcp.${project}.svc:61616 -n ${project}"
-			junit "**/target/failsafe-reports/*.xml"
-		}
+		withEnv(
+			[	"STORY_API_JDBC_URL=jdbc:postgresql://postgresql.${project}.svc:5432/${microservice}", 
+				"STORY_API_DB_USER=postgres", 
+				"STORY_API_DB_PASSWORD=welcome1",
+				"STORY_API_SERVICE_URI=http://${microservice}.${project}.svc:8080",
+				"JBOSS_A_MQ_BROKER_URL=tcp://broker-amq-tcp.${project}.svc:61616",
+				"JBOSS_A_MQ_BROKER_USER=amq",
+				"JBOSS_A_MQ_BROKER_PASSWORD=amq"
+			]) {
+				withMaven(mavenSettingsConfig: 'microservices-scrum') {
+	     			sh "mvn clean verify -P integration-test"
+	    		} 
+    	}
 	}
 	
 	stage("tag container for testing") {
