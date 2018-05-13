@@ -1,4 +1,4 @@
-node {
+node('maven') {
 
 	def project = "dev"
 	def microservice = "story-api"
@@ -10,7 +10,7 @@ node {
 	}
 
 	stage("build and execute unit tests") {
-		withMaven(maven: 'M3', mavenSettingsConfig: 'MySettings', mavenLocalRepo: '.repository') {
+		withMaven(mavenSettingsConfig: 'MySettings') {
 	      sh "mvn clean install"
 	    } 
 	}
