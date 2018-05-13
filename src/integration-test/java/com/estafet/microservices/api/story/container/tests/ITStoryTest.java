@@ -34,6 +34,7 @@ public class ITStoryTest {
 	public void before() {
 		RestAssured.baseURI = System.getenv("STORY_API_SERVICE_URI");
 		newStoryTopicConsumer = new NewStoryTopicConsumer();
+		updatedStoryTopicConsumer = new UpdatedStoryTopicConsumer();
 	}
 
 	@After
