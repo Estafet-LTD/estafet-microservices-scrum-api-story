@@ -9,7 +9,7 @@ node('maven') {
 		git branch: "master", url: "https://github.com/Estafet-LTD/estafet-microservices-scrum-api-story"
 	}
 
-	stage("build and execute unit tests") {
+	stage("unit tests") {
 		withMaven(mavenSettingsConfig: 'microservices-scrum') {
 	      sh "mvn clean test"
 	    } 
@@ -30,9 +30,8 @@ node('maven') {
 	}
 
 	stage("build & deploy container") {
-		openshiftBuild namespace: project, buildConfig: microservice, showBuildLogs: "true",  waitTime: "300000"
-		sh "oc set env dc/${microservice} JBOSS_A_MQ_BROKER_URL=tcp://broker-amq-tcp.${project}.svc:61616 -n ${project}"
-		openshiftVerifyDeployment namespace: project, depCfg: microservice, replicaCount:"1", verifyReplicaCount: "true", waitTime: "600000"
+		openshiftBuild namespace: project, buildConfig: microservice, showBuildLogs: "true",  waitTime: "300000", env : [ [ name : "JBOSS_A_MQ_BROKER_URL", value : "tcp://broker-amq-tcp.${project}.svc:61616" ] ]
+		openshiftVerifyDeployment namespace: project, depCfg: microservice, replicaCount:"1", verifyReplicaCount: "true", waitTime: "600000" 
 	}
 
 	stage("execute the container tests") {
@@ -51,10 +50,13 @@ node('maven') {
     	}
 	}
 	
-	stage("tag container for testing") {
+	stage("deploy snapshots") {
 		withMaven(mavenSettingsConfig: 'microservices-scrum') {
  			sh "mvn clean deploy -Dmaven.test.skip=true"
 		} 
+	}	
+	
+	stage("tag container for testing") {
 		openshiftTag namespace: project, srcStream: microservice, srcTag: 'latest', destinationNamespace: 'test', destinationStream: microservice, destinationTag: 'PrepareForTesting'
 	}
 
