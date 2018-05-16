@@ -14,6 +14,3 @@ cpu_max: 500m
 
 memory_min: 50Mi
 memory_max: 150Mi
-
-readiness_initial_delay_seconds: 180
-readiness_timeout_seconds: 3

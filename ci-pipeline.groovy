@@ -32,7 +32,7 @@ node('maven') {
 	stage("build & deploy container") {
 		openshiftBuild namespace: project, buildConfig: microservice, showBuildLogs: "true",  waitTime: "300000", env : [ [ name : "JBOSS_A_MQ_BROKER_URL", value : "tcp://broker-amq-tcp.${project}.svc:61616" ] ]
 		openshiftVerifyDeployment namespace: project, depCfg: microservice, replicaCount:"1", verifyReplicaCount: "true", waitTime: "300000"
-		sleep time:60 
+		sleep time:90 
 	}
 
 	stage("execute the container tests") {
