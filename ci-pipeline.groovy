@@ -46,13 +46,13 @@ node('maven') {
 				"JBOSS_A_MQ_BROKER_USER=amq",
 				"JBOSS_A_MQ_BROKER_PASSWORD=amq"
 			]) {
-				withMaven(mavenSettingsConfig: 'microservices-scrum') {
-					try {
-						sh "mvn clean verify -P integration-test"
-					} finally {
-						sh "oc set env dc/${microservice} JBOSS_A_MQ_BROKER_URL=tcp://localhost:61616 -n ${project}"
-					}
-	    		} 
+			withMaven(mavenSettingsConfig: 'microservices-scrum') {
+				try {
+					sh "mvn clean verify -P integration-test"
+				} finally {
+					sh "oc set env dc/${microservice} JBOSS_A_MQ_BROKER_URL=tcp://localhost:61616 -n ${project}"
+				}
+    		} 
     	}
 	}
 	
