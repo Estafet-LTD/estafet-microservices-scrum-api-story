@@ -2,6 +2,7 @@ package com.estafet.microservices.api.story.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -24,7 +25,7 @@ public class AcceptanceCriterion {
 
 	@JsonIgnore
 	@ManyToOne
-	@JoinColumn(name = "STORY_ID", nullable = false, referencedColumnName = "STORY_ID")
+	@JoinColumn(name = "STORY_ID", nullable = false, referencedColumnName = "STORY_ID", foreignKey = @ForeignKey(name = "ACCPT_CRITERION_TO_STORY_FK"))
 	private Story criterionStory;
 
 	@Column(name = "DESCRIPTION", nullable = false)

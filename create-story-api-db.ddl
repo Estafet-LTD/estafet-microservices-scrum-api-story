@@ -5,5 +5,5 @@ create table MESSAGE_EVENT (TOPIC_ID varchar(255) not null, MESSAGE_REFERENCE va
 create table SPRINT (SPRINT_ID int4 not null, PROJECT_ID int4 not null, primary key (SPRINT_ID));
 create table STORY (STORY_ID int4 not null, DESCRIPTION varchar(255) not null, PROJECT_ID int4 not null, SPRINT_ID int4, STATUS varchar(255) not null, STORY_POINTS int4 not null, TITLE varchar(255) not null, primary key (STORY_ID));
 create table TASK (TASK_ID int4 not null, STATUS varchar(255) not null, STORY_ID int4 not null, primary key (TASK_ID));
-alter table ACCEPTANCE_CRITERION add constraint FKk57pmvcvti3wttp81pio3b4ag foreign key (STORY_ID) references STORY;
-alter table TASK add constraint FK2fjocyiwq3pnx8ihjw323nex0 foreign key (STORY_ID) references STORY;
+alter table ACCEPTANCE_CRITERION add constraint ACCPT_CRITERION_TO_STORY_FK foreign key (STORY_ID) references STORY;
+alter table TASK add constraint TASK_TO_STORY_FK foreign key (STORY_ID) references STORY;

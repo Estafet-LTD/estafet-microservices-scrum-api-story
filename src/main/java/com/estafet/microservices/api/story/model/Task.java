@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -31,7 +32,7 @@ public class Task {
 
 	@JsonIgnore
 	@ManyToOne
-	@JoinColumn(name = "STORY_ID", nullable = false, referencedColumnName = "STORY_ID")
+	@JoinColumn(name = "STORY_ID", nullable = false, referencedColumnName = "STORY_ID", foreignKey = @ForeignKey(name = "TASK_TO_STORY_FK"))
 	private Story taskStory;
 
 	public Task update(Task newTask) {

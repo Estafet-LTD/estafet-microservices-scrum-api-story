@@ -1,5 +1,5 @@
-alter table ACCEPTANCE_CRITERION drop constraint FKk57pmvcvti3wttp81pio3b4ag;
-alter table TASK drop constraint FK2fjocyiwq3pnx8ihjw323nex0;
+alter table ACCEPTANCE_CRITERION drop constraint ACCPT_CRITERION_TO_STORY_FK;
+alter table TASK drop constraint TASK_TO_STORY_FK;
 drop table if exists ACCEPTANCE_CRITERION cascade;
 drop table if exists MESSAGE_EVENT cascade;
 drop table if exists SPRINT cascade;
