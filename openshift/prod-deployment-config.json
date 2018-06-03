@@ -86,6 +86,7 @@
 							}
 						],
 						"name": "story-api",
+						"image": "basic-ui:latest",
 						"imagePullPolicy": "Always",
 						"ports": [
 							{
