@@ -50,7 +50,7 @@
 							},
 							{
 								"name": "STORY_API_JDBC_URL",
-								"value": "jdbc:postgresql://postgresql.prod.svc:5432/story-api"
+								"value": "jdbc:postgresql://postgresql.prod.svc:5432/prod-story-api"
 							},
 							{
 								"name": "JAEGER_SAMPLER_TYPE",
