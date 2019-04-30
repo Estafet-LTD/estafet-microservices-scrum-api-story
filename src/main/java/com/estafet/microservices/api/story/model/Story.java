@@ -1,5 +1,6 @@
 package com.estafet.microservices.api.story.model;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -192,6 +193,14 @@ public class Story {
 		}
 	}
 
+	public static Story fromJSON(String message) {
+		try {
+			return new ObjectMapper().readValue(message, Story.class);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
 	public static Story getAPI() {
 		Story story = new Story();
 		story.id = 1;

@@ -73,6 +73,7 @@ public class ITStoryTest {
 	@Test
 	@DatabaseSetup("ITStoryTest-data.xml")
 	public void testCreateStory() {
+		String body = 
 		given()
 			.contentType(ContentType.JSON)
 			.body("{\"title\":\"My Story\",\"description\":\"My Story\",\"storypoints\":5}")
@@ -80,16 +81,18 @@ public class ITStoryTest {
 			.post("/project/1/story")
 		.then()
 			.statusCode(HttpURLConnection.HTTP_OK)
-			.body("id", is(1))
 			.body("title", is("My Story"))
 			.body("description", is("My Story"))
 			.body("storypoints", is(5))
 			.body("projectId", is(1))
-			.body("status", is("Not Started"));
+			.body("status", is("Not Started"))
+			.extract().body().asString();
 	
-		get("/story/1").then()
+		Story newStory = Story.fromJSON(body);
+		
+		get("/story/" + newStory.getId()).then()
 			.statusCode(HttpURLConnection.HTTP_OK)
-			.body("id", is(1))
+			.body("id", is(newStory.getId()))
 			.body("title", is("My Story"))
 			.body("description", is("My Story"))
 			.body("storypoints", is(5))
@@ -97,7 +100,7 @@ public class ITStoryTest {
 			.body("status", is("Not Started"));
 		
 		Story story = newStoryTopicConsumer.consume(Story.class);
-		assertThat(story.getId(), is(1));
+		assertThat(story.getId(), is(newStory.getId()));
 		assertThat(story.getTitle(), is("My Story"));
 		assertThat(story.getDescription(), is("My Story"));
 	}
