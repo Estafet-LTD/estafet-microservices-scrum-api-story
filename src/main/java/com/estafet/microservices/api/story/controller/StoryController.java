@@ -1,6 +1,7 @@
 package com.estafet.microservices.api.story.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,12 +21,15 @@ import com.estafet.microservices.api.story.service.StoryService;
 @RestController
 public class StoryController {
 
+	@Value("${app.version}")
+	private String appVersion;
+	
 	@Autowired
 	private StoryService storyService;
 
 	@GetMapping("/api")
 	public Story getAPI() {
-		return Story.getAPI();
+		return Story.getAPI(appVersion);
 	}
 	
 	@GetMapping("/story/{id}")

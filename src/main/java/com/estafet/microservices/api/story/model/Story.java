@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -44,6 +45,9 @@ public class Story {
 
 	@Column(name = "PROJECT_ID", nullable = false)
 	private Integer projectId;
+	
+	@Transient
+	private String version;
 
 	@OneToMany(mappedBy = "criterionStory", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Set<AcceptanceCriterion> criteria = new HashSet<AcceptanceCriterion>();
@@ -107,6 +111,10 @@ public class Story {
 		description = newStory.getDescription() != null ? newStory.getDescription() : description;
 		storypoints = newStory.getStorypoints() != null ? newStory.getStorypoints() : storypoints;
 		return this;
+	}
+
+	public String getVersion() {
+		return version;
 	}
 
 	@JsonIgnore
@@ -201,7 +209,7 @@ public class Story {
 		}
 	}
 	
-	public static Story getAPI() {
+	public static Story getAPI(String version) {
 		Story story = new Story();
 		story.id = 1;
 		story.description = "my story description";
@@ -211,6 +219,7 @@ public class Story {
 		story.status = "Not Started";
 		story.storypoints = 13;
 		story.criteria.add(AcceptanceCriterion.getAPI());
+		story.version = API.getVersion(version);
 		return story;
 	}
 
