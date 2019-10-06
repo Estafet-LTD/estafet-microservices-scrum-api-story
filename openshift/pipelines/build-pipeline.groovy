@@ -82,12 +82,6 @@ node("maven") {
 			}
 		}
 	}
-
-	stage("deploy snapshots") {
-		withMaven(mavenSettingsConfig: 'microservices-scrum') {
- 			sh "mvn clean deploy -Dmaven.test.skip=true"
-		} 
-	}	
 	
 	stage("promote the image") {
 		openshiftTag namespace: project, srcStream: microservice, srcTag: version, destinationNamespace: 'cicd', destinationStream: microservice, destinationTag: version
