@@ -180,5 +180,12 @@
 		<developerConnection>scm:git:https://github.com/Estafet-LTD/estafet-microservices-scrum-api-story.git</developerConnection>
 	  <tag>HEAD</tag>
   </scm>
-	
+
+	<dependencies>
+		<dependency>
+			<groupId>com.estafet.microservices.scrum</groupId>
+			<artifactId>microservices-scrum-commons-lib</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+	</dependencies>
 </project>
