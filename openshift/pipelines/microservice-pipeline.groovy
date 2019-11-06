@@ -1,3 +1,28 @@
+@NonCPS
+def getVersions(json) {
+	def tags = new groovy.json.JsonSlurper().parseText(json).status.tags
+	def versions = []
+	for (int i = 0; i < tags.size(); i++) {
+		versions << tags[i]['tag']
+	}
+	return versions
+}
+
+def recentVersion(versions) {
+	def size = versions.size()
+	return versions[size-1]
+}
+
+def getLatestVersion(microservice) {
+	sh "oc get is ${microservice} -o json -n cicd > image.json"
+	def image = readFile('image.json')
+	def versions = getVersions(image)
+	if (versions.size() == 0) {
+		error("There are no images for ${microservice}")
+	}
+	return recentVersion(versions)
+}
+
 node("maven") {
 
 	properties([
@@ -10,11 +35,16 @@ node("maven") {
 	def microservice = "story-api"	
 	def version
 
-	stage("checkout") {
-		version = sh(returnStdout: true, script: "git tag --sort version:refname | tail -1").trim()
-		git branch: version, url: "https://github.com/${params.GITHUB}/estafet-microservices-scrum-api-story"
+	stage("get the latest version") {
+		version = getLatestVersion microservice
 	}
-	
+
+	stage("checkout") {
+		checkout scm: [$class: 'GitSCM', 
+      userRemoteConfigs: [[url: "https://github.com/${params.GITHUB}/estafet-microservices-scrum-api-story"]], 
+      branches: [[name: "refs/tags/${version}"]]], changelog: false, poll: false		
+	}
+
 	stage("prepare the database") {
 		withMaven(mavenSettingsConfig: 'microservices-scrum') {
 	      sh "mvn clean package -P prepare-db -Dmaven.test.skip=true -Dproject=${project}"
