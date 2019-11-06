@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<dataset>
-	<STORY STORY_ID="1000" TITLE="Story #1" DESCRIPTION="Story #1" STATUS="Not Started" STORY_POINTS="13" PROJECT_ID="1"/>
-	<ACCEPTANCE_CRITERION/>
-	<TASK/>
-	<SPRINT SPRINT_ID="1" PROJECT_ID="1"/>
-</dataset>
