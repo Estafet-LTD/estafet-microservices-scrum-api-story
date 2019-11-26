@@ -17,6 +17,8 @@ import com.estafet.microservices.api.story.message.StoryDetails;
 import com.estafet.microservices.api.story.model.Story;
 import com.estafet.microservices.api.story.service.StoryService;
 
+import io.opentracing.Tracer;
+
 @SuppressWarnings({ "rawtypes", "unchecked" })
 @RestController
 public class StoryController {
@@ -26,9 +28,13 @@ public class StoryController {
 	
 	@Autowired
 	private StoryService storyService;
+	
+	@Autowired
+	private Tracer tracer;	
 
 	@GetMapping("/api")
 	public Story getAPI() {
+		tracer.activeSpan().deactivate();
 		return Story.getAPI(appVersion);
 	}
 	
