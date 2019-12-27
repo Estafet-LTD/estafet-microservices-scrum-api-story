@@ -16,6 +16,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import com.estafet.microservices.api.story.model.Story;
+import com.estafet.microservices.scrum.lib.commons.properties.PropertyUtils;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
@@ -32,7 +33,7 @@ public class ITStoryTest {
 	
 	@Before
 	public void before() {
-		RestAssured.baseURI = System.getenv("STORY_API_SERVICE_URI");
+		RestAssured.baseURI = PropertyUtils.instance().getProperty("STORY_API_SERVICE_URI");
 		newStoryTopicConsumer = new NewStoryTopicConsumer();
 		updatedStoryTopicConsumer = new UpdatedStoryTopicConsumer();
 	}
