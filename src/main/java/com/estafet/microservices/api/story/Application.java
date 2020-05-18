@@ -6,9 +6,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jms.DefaultJmsListenerContainerFactoryConfigurer;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -18,7 +16,6 @@ import org.springframework.jms.config.JmsListenerContainerFactory;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.support.converter.MessageConverter;
 import org.springframework.jms.support.converter.SimpleMessageConverter;
-import org.springframework.web.client.RestTemplate;
 
 import io.opentracing.Tracer;
 import io.opentracing.contrib.jms.spring.TracingJmsTemplate;
@@ -28,7 +25,6 @@ import io.opentracing.contrib.jms.spring.TracingJmsTemplate;
 @EnableAutoConfiguration
 @SpringBootApplication
 @EnableJms
-//@EnableDiscoveryClient
 public class Application extends SpringBootServletInitializer {
 
 	public static void main(String[] args) {
@@ -37,7 +33,7 @@ public class Application extends SpringBootServletInitializer {
 
 	@Bean
 	public io.opentracing.Tracer jaegerTracer() {
-		return new com.uber.jaeger.Configuration("story-api",
+		return new com.uber.jaeger.Configuration(System.getenv("JAEGER_SERVICE_NAME"),
 				com.uber.jaeger.Configuration.SamplerConfiguration.fromEnv(),
 				com.uber.jaeger.Configuration.ReporterConfiguration.fromEnv()).getTracer();
 	}
